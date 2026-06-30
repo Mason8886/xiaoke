@@ -258,6 +258,18 @@ export interface UnifiedCommand {
 // --- Bridge ---
 
 export const bridge = {
+  previewOpenUrl: (url: string) =>
+    invoke<string>('preview_open_url', { url }),
+
+  previewRefresh: () =>
+    invoke<void>('preview_refresh'),
+
+  previewBack: () =>
+    invoke<void>('preview_back'),
+
+  previewForward: () =>
+    invoke<void>('preview_forward'),
+
   startSession: (params: StartSessionParams) =>
     invoke<SessionInfo>('start_claude_session', { params }),
 

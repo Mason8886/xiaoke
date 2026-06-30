@@ -139,6 +139,16 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="pt-3 mt-3 border-t border-border-subtle px-3">
+        <button onClick={() => setSecondaryTab('preview')}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
+            text-sm text-text-muted hover:bg-bg-secondary hover:text-text-primary
+            transition-smooth">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+            stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
+            <path d="M2 4h12v8H2zM5 14h6" />
+          </svg>
+          {t('panel.preview')}
+        </button>
         <button onClick={() => setSecondaryTab('skills')}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
             text-sm text-text-muted hover:bg-bg-secondary hover:text-text-primary

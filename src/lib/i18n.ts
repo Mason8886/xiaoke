@@ -109,9 +109,26 @@ const messages: Record<Locale, Record<string, string>> = {
     'panel.settings': '设置',
     'panel.agentsSoon': 'Agent Teams（即将推出）',
     'panel.settingsSoon': '设置（即将推出）',
+    'panel.preview': '预览',
     'panel.skills': '技能',
     'panel.plugins': '插件',
     'panel.close': '关闭面板',
+
+    // PreviewPanel
+    'preview.urlPlaceholder': '输入 URL 或 localhost...',
+    'preview.back': '后退',
+    'preview.forward': '前进',
+    'preview.refresh': '刷新',
+    'preview.open': '打开',
+    'preview.external': '在浏览器中打开',
+    'preview.snapshot': '采集当前预览状态',
+    'preview.snapshotShort': '截图',
+    'preview.snapshotReady': '已采集当前预览状态',
+    'preview.snapshotEmpty': '页面已加载，但没有可读取的正文内容',
+    'preview.crossOriginSnapshot': '跨域页面只能读取地址和视口信息，真实截图需要浏览器调试工具',
+    'preview.loading': '加载中...',
+    'preview.loadFailed': '页面加载失败',
+    'preview.empty': '输入地址开始预览',
 
     // FileExplorer
     'files.title': '文件',
@@ -797,9 +814,26 @@ const messages: Record<Locale, Record<string, string>> = {
     'panel.settings': 'Settings',
     'panel.agentsSoon': 'Agent Teams (coming soon)',
     'panel.settingsSoon': 'Settings (coming soon)',
+    'panel.preview': 'Preview',
     'panel.skills': 'Skills',
     'panel.plugins': 'Plugins',
     'panel.close': 'Close panel',
+
+    // PreviewPanel
+    'preview.urlPlaceholder': 'Enter URL or localhost...',
+    'preview.back': 'Back',
+    'preview.forward': 'Forward',
+    'preview.refresh': 'Refresh',
+    'preview.open': 'Open',
+    'preview.external': 'Open in browser',
+    'preview.snapshot': 'Capture current preview state',
+    'preview.snapshotShort': 'Shot',
+    'preview.snapshotReady': 'Preview state captured',
+    'preview.snapshotEmpty': 'The page loaded, but no readable body text was found',
+    'preview.crossOriginSnapshot': 'Cross-origin pages expose only URL and viewport here; real screenshots need a browser debugging tool',
+    'preview.loading': 'Loading...',
+    'preview.loadFailed': 'Failed to load page',
+    'preview.empty': 'Enter an address to start previewing',
 
     // FileExplorer
     'files.title': 'Files',

@@ -1045,3 +1045,43 @@ thead {
   background: var(--skin-scrollbar);
   border-radius: 999px;
 }
+
+.preview-icon-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
+}
+
+.preview-icon-btn:hover:not(:disabled) {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.preview-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.preview-action-btn {
+  height: 32px;
+  min-width: 40px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.preview-action-btn:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
