@@ -20,7 +20,13 @@ export type ModelResolution =
  */
 export function resolveModelOrError(selectedModel: string): ModelResolution {
   const provider = useProviderStore.getState().getActive();
-  if (!provider) return { ok: true, model: normalizeDeepSeekModelName(selectedModel) };
+  if (!provider) {
+    const normalized = normalizeDeepSeekModelName(selectedModel);
+    return {
+      ok: true,
+      model: normalized === selectedModel ? DEEPSEEK_V4_FLASH : normalized,
+    };
+  }
 
   // 1. Check direct model ID mapping first (e.g. 'claude-opus-4-6-1m' → 'glm-5-1m')
   const directMapping = provider.modelMappings.find(

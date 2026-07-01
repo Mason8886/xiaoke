@@ -1,15 +1,15 @@
 {
-    "version":  "0.10.3",
-    "notes":  "Adds automatic local MCP scanning and one-click import from Claude and Codex configs.",
-    "pub_date":  "2026-07-01T16:33:21Z",
+    "version":  "0.10.4",
+    "notes":  "Hotfixes new task creation and model fallback to avoid first-message send failures and model-not-found errors.",
+    "pub_date":  "2026-07-01T16:42:59Z",
     "platforms":  {
                       "windows-x86_64-nsis":  {
-                                                  "url":  "https://github.com/mistydew/tokenicode-deepseek-alpha/releases/download/v0.10.3-alpha.1/TOKENICODE_0.10.3_x64-setup.exe",
-                                                  "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSejJBVEZ5YXRVa0graDMzd05YSUhFMjUwUUh3bmJ1ZU1QeHJWQyt1UklEQVl4ZGNBUE0zUUl2TlBpdFZrL1haTFFNVzN5MEwxcGxwbkNxL3JUSUZVVWxqamdFbFBqVFF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyOTIzNTI0CWZpbGU6VE9LRU5JQ09ERV8wLjEwLjNfeDY0LXNldHVwLmV4ZQp4QVl4ejg1MCt6NzVGc2IxNWtCdFpTUmp6M0RaUkZZU01iRUpzK0xnT0dRSFFMRkJ2c1dkZG4ydGZsUXpuaE1Fcm5rQkhjU05hK0x0RGVXYml3MVRBdz09Cg=="
+                                                  "url":  "https://github.com/mistydew/tokenicode-deepseek-alpha/releases/download/v0.10.4-alpha.1/TOKENICODE_0.10.4_x64-setup.exe",
+                                                  "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSejJBVEZ5YXRVa0NSYzBjMUY4bkVkMGlzanJnd2pNS3l4dGpjUXF5d09nckpGN1Q3a2k5ZkpGM0daOTdYd2VKby9JVm15WndSeEllbVRjRjNQS1FLNTBXUEcxWWhpbUFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyOTI0MTM5CWZpbGU6VE9LRU5JQ09ERV8wLjEwLjRfeDY0LXNldHVwLmV4ZQprdmJXblRaMTdCY21mVVRLaUFORzFDdEJtS2lUYlhPOXZjb3U5TzZoUU96UmVJalNZWU1WT3hEU0dFR05wTFpXMjJpakZwNG1PNWNqWUlmeG9Cb3RBdz09Cg=="
                                               },
                       "windows-x86_64":  {
-                                             "url":  "https://github.com/mistydew/tokenicode-deepseek-alpha/releases/download/v0.10.3-alpha.1/TOKENICODE_0.10.3_x64-setup.exe",
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSejJBVEZ5YXRVa0graDMzd05YSUhFMjUwUUh3bmJ1ZU1QeHJWQyt1UklEQVl4ZGNBUE0zUUl2TlBpdFZrL1haTFFNVzN5MEwxcGxwbkNxL3JUSUZVVWxqamdFbFBqVFF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyOTIzNTI0CWZpbGU6VE9LRU5JQ09ERV8wLjEwLjNfeDY0LXNldHVwLmV4ZQp4QVl4ejg1MCt6NzVGc2IxNWtCdFpTUmp6M0RaUkZZU01iRUpzK0xnT0dRSFFMRkJ2c1dkZG4ydGZsUXpuaE1Fcm5rQkhjU05hK0x0RGVXYml3MVRBdz09Cg=="
+                                             "url":  "https://github.com/mistydew/tokenicode-deepseek-alpha/releases/download/v0.10.4-alpha.1/TOKENICODE_0.10.4_x64-setup.exe",
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSejJBVEZ5YXRVa0NSYzBjMUY4bkVkMGlzanJnd2pNS3l4dGpjUXF5d09nckpGN1Q3a2k5ZkpGM0daOTdYd2VKby9JVm15WndSeEllbVRjRjNQS1FLNTBXUEcxWWhpbUFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyOTI0MTM5CWZpbGU6VE9LRU5JQ09ERV8wLjEwLjRfeDY0LXNldHVwLmV4ZQprdmJXblRaMTdCY21mVVRLaUFORzFDdEJtS2lUYlhPOXZjb3U5TzZoUU96UmVJalNZWU1WT3hEU0dFR05wTFpXMjJpakZwNG1PNWNqWUlmeG9Cb3RBdz09Cg=="
                                          }
                   }
 }

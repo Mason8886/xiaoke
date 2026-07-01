@@ -89,8 +89,16 @@ export function Sidebar() {
           useAgentStore.getState().saveToCache(currentTabId);
         }
 
-        // Deselect current session FIRST so background stream routing works
-        useSessionStore.getState().setSelectedSession(null);
+        const workingDirectory = useSettingsStore.getState().workingDirectory;
+        if (!workingDirectory) {
+          useSessionStore.getState().setSelectedSession(null);
+          return;
+        }
+
+        const newDraftId = `draft_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        useChatStore.getState().ensureTab(newDraftId);
+        useChatStore.getState().resetTab(newDraftId);
+        useSessionStore.getState().addDraftSession(newDraftId, workingDirectory);
 
       }}
         className="w-full py-2.5 px-4 rounded-[20px] text-sm font-medium

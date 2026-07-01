@@ -663,13 +663,19 @@ export function InputBar() {
   // --- Submit ---
   const handleSubmit = useCallback(async () => {
     // Capture tabId at the start of submission
-    const tabId = useSessionStore.getState().selectedSessionId;
-    if (!tabId) return;
+    let tabId = useSessionStore.getState().selectedSessionId;
+    if (!tabId) {
+      if (!workingDirectory) return;
+      tabId = `draft_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      useChatStore.getState().ensureTab(tabId);
+      useChatStore.getState().resetTab(tabId);
+      useSessionStore.getState().addDraftSession(tabId, workingDirectory);
+    }
     useChatStore.getState().ensureTab(tabId);
 
     // Read input from store directly (not closure) so that async callers
     // like handlePlanApprove (setInput + rAF) always see the latest value.
-    const rawInput = getActiveTabState().inputDraft || '';
+    const rawInput = getActiveTabState().inputDraft || textareaRef.current?.getText() || '';
     let text = rawInput.trim();
 
     // Plan approval shortcut: empty Enter triggers approve & execute flow
