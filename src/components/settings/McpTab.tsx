@@ -1,13 +1,18 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useMcpStore } from '../../stores/mcpStore';
-import type { McpServer, McpServerConfig } from '../../stores/mcpStore';
+import type { DiscoveredMcpServer, McpServer, McpServerConfig } from '../../stores/mcpStore';
 import { useT } from '../../lib/i18n';
 
 export function McpTab() {
   const t = useT();
   const servers = useMcpStore((s) => s.servers);
+  const discoveredServers = useMcpStore((s) => s.discoveredServers);
   const isLoading = useMcpStore((s) => s.isLoading);
+  const isScanning = useMcpStore((s) => s.isScanning);
+  const scanMessage = useMcpStore((s) => s.scanMessage);
   const fetchServers = useMcpStore((s) => s.fetchServers);
+  const scanInstalledServers = useMcpStore((s) => s.scanInstalledServers);
+  const importDiscoveredServers = useMcpStore((s) => s.importDiscoveredServers);
   const addServer = useMcpStore((s) => s.addServer);
   const updateServer = useMcpStore((s) => s.updateServer);
   const deleteServer = useMcpStore((s) => s.deleteServer);
@@ -18,13 +23,16 @@ export function McpTab() {
 
   useEffect(() => {
     fetchServers();
-  }, [fetchServers]);
+    scanInstalledServers();
+  }, [fetchServers, scanInstalledServers]);
 
   const handleDelete = useCallback(async (name: string) => {
     if (confirm(t('mcp.confirmDelete'))) {
       await deleteServer(name);
     }
   }, [deleteServer, t]);
+
+  const missingDiscovered = discoveredServers.filter((server) => !server.imported);
 
   return (
     <div className="space-y-4">
@@ -37,6 +45,26 @@ export function McpTab() {
           <span className="text-xs text-text-tertiary">{servers.length}</span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => scanInstalledServers()}
+            disabled={isScanning}
+            className="px-2.5 py-1.5 rounded border border-border-subtle
+              text-xs text-text-muted hover:bg-bg-secondary hover:text-text-primary
+              transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+            title="扫描终端和本地配置里的 MCP"
+          >
+            {isScanning ? '扫描中...' : '扫描本地'}
+          </button>
+          {missingDiscovered.length > 0 && (
+            <button
+              onClick={() => importDiscoveredServers()}
+              className="px-2.5 py-1.5 rounded bg-accent text-text-inverse
+                text-xs font-medium hover:bg-accent-hover transition-smooth"
+              title="导入扫描到但当前未显示的 MCP"
+            >
+              导入 {missingDiscovered.length}
+            </button>
+          )}
           <button
             onClick={() => fetchServers()}
             className="p-1.5 rounded hover:bg-bg-secondary
@@ -64,6 +92,30 @@ export function McpTab() {
       </div>
 
       {/* Content — always expanded */}
+      {scanMessage && (
+        <p className="text-xs text-text-tertiary">{scanMessage}</p>
+      )}
+
+      {discoveredServers.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-text-muted">本地扫描结果</span>
+            <span className="text-xs text-text-tertiary">
+              {missingDiscovered.length > 0 ? `${missingDiscovered.length} 个未导入` : '全部已导入'}
+            </span>
+          </div>
+          <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+            {discoveredServers.map((server) => (
+              <DiscoveredMcpCard
+                key={`${server.source}-${server.name}-${server.config.command}`}
+                server={server}
+                onImport={() => importDiscoveredServers([server.name])}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-2">
         {/* Add form */}
         {isAdding && (
@@ -107,6 +159,52 @@ export function McpTab() {
           ))
         )}
       </div>
+    </div>
+  );
+}
+
+function DiscoveredMcpCard({
+  server,
+  onImport,
+}: {
+  server: DiscoveredMcpServer;
+  onImport: () => void;
+}) {
+  const envCount = Object.keys(server.config.env).length;
+  const cmdDisplay = [server.config.command, ...server.config.args].join(' ');
+
+  return (
+    <div className={`px-3 py-2.5 rounded-lg border transition-smooth
+      ${server.imported ? 'border-border-subtle bg-bg-secondary/20' : 'border-accent/20 bg-accent/5'}`}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-[13px] font-medium text-text-primary truncate flex-1">
+          {server.name}
+        </span>
+        <span className={`px-2 py-0.5 rounded-md text-[11px] font-medium
+          ${server.imported ? 'bg-green-500/10 text-green-500' : 'bg-amber-500/10 text-amber-500'}`}
+        >
+          {server.imported ? '已导入' : '未导入'}
+        </span>
+        {!server.imported && (
+          <button
+            onClick={onImport}
+            className="px-2 py-0.5 rounded-md text-[11px] font-medium
+              bg-accent text-text-inverse hover:bg-accent-hover transition-smooth"
+          >
+            导入
+          </button>
+        )}
+      </div>
+      <p className="mt-1 text-[11px] text-text-tertiary truncate" title={server.source}>
+        {server.source}
+      </p>
+      <p className="mt-1 text-xs text-text-muted font-mono truncate" title={cmdDisplay}>
+        {cmdDisplay}
+      </p>
+      {envCount > 0 && (
+        <p className="mt-0.5 text-[11px] text-text-tertiary">{envCount} 个环境变量</p>
+      )}
     </div>
   );
 }
