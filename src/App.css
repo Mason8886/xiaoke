@@ -355,6 +355,11 @@ body {
   -webkit-user-select: none;
 }
 
+:root[data-mono-follows-interface="true"] .font-mono,
+:root[data-mono-follows-interface="true"] .cm-editor .cm-scroller {
+  font-family: var(--tokenicode-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif) !important;
+}
+
 /* Allow text selection only in input areas and message content */
 input, textarea, [contenteditable="true"],
 .message-content, .selectable {

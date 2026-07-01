@@ -68,6 +68,8 @@ interface SettingsState {
   fontSize: number;
   /** Global UI font family preset */
   fontFamily: FontFamily;
+  /** Whether mono-styled UI labels should follow the selected interface font */
+  monoFontFollowsInterface: boolean;
   /** Sidebar width in px (default 280) */
   sidebarWidth: number;
   /** Whether the CLI setup wizard has been completed or skipped */
@@ -115,6 +117,7 @@ interface SettingsState {
   toggleLocale: () => void;
   setFontSize: (size: number) => void;
   setFontFamily: (family: FontFamily) => void;
+  setMonoFontFollowsInterface: (enabled: boolean) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
   setSidebarWidth: (width: number) => void;
@@ -158,6 +161,7 @@ export const useSettingsStore = create<SettingsState>()(
       locale: 'zh',
       fontSize: 18,
       fontFamily: 'microsoft',
+      monoFontFollowsInterface: true,
       sidebarWidth: 280,
       setupCompleted: false,
       thinkingLevel: 'medium' as ThinkingLevel,
@@ -229,6 +233,9 @@ export const useSettingsStore = create<SettingsState>()(
       setFontFamily: (fontFamily) =>
         set(() => ({ fontFamily })),
 
+      setMonoFontFollowsInterface: (monoFontFollowsInterface) =>
+        set(() => ({ monoFontFollowsInterface })),
+
       increaseFontSize: () =>
         set((state) => ({ fontSize: Math.min(36, state.fontSize + 1) })),
 
@@ -270,7 +277,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'tokenicode-settings',
-      version: 8,
+      version: 9,
       migrate: (persistedState: unknown, version: number) => {
         const persisted = persistedState as Record<string, unknown>;
         if (version === 0) {
@@ -322,6 +329,9 @@ export const useSettingsStore = create<SettingsState>()(
         if (version < 8) {
           persisted.backgroundTheme = 'garden';
         }
+        if (version < 9) {
+          persisted.monoFontFollowsInterface = true;
+        }
         return persisted;
       },
       partialize: (state) => ({
@@ -330,12 +340,13 @@ export const useSettingsStore = create<SettingsState>()(
         backgroundTheme: state.backgroundTheme,
         sidebarOpen: state.sidebarOpen,
         secondaryPanelWidth: state.secondaryPanelWidth,
-        // workingDirectory intentionally NOT persisted — app starts at WelcomeScreen
+        workingDirectory: state.workingDirectory,
         selectedModel: state.selectedModel,
         sessionMode: state.sessionMode,
         locale: state.locale,
         fontSize: state.fontSize,
         fontFamily: state.fontFamily,
+        monoFontFollowsInterface: state.monoFontFollowsInterface,
         sidebarWidth: state.sidebarWidth,
         setupCompleted: state.setupCompleted,
         thinkingLevel: state.thinkingLevel,

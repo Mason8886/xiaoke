@@ -39,7 +39,6 @@ export function CommandPalette() {
         }
         // In v2, navigating away doesn't reset the previous tab
         useSessionStore.getState().setSelectedSession(null);
-        useSettingsStore.getState().setWorkingDirectory('');
       },
     },
     {

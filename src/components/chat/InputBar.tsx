@@ -24,6 +24,7 @@ import { PlanReviewCard } from './PlanReviewCard';
 import { PermissionCard } from './PermissionCard';
 import { QuestionCard } from './QuestionCard';
 import { TiptapEditor, type TiptapEditorHandle } from './TiptapEditor';
+import { open } from '@tauri-apps/plugin-dialog';
 // drag-state import removed — tree drag handled by ChatPanel
 
 /** Thinking effort level configuration data */
@@ -360,6 +361,26 @@ export function InputBar() {
 
   // Whether this is a follow-up (session already has a CLI session ID)
   const hasActiveSession = sessionStatus !== 'idle';
+  const workingDirectoryLabel = workingDirectory
+    ? workingDirectory.split(/[\\/]/).filter(Boolean).pop() || workingDirectory
+    : t('input.projectFolder');
+
+  const handlePickWorkingDirectory = useCallback(async () => {
+    if (isRunning) return;
+    try {
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        title: t('input.selectFolder'),
+        defaultPath: workingDirectory || undefined,
+      });
+      if (typeof selected === 'string' && selected) {
+        useSettingsStore.getState().setWorkingDirectory(selected);
+      }
+    } catch (error) {
+      console.warn('[InputBar] failed to pick working directory', error);
+    }
+  }, [isRunning, t, workingDirectory]);
 
   // --- Slash command detection ---
   // Relaxed: detect "/" at start of first line, keep popover open even after spaces
@@ -1501,6 +1522,23 @@ export function InputBar() {
             className="hidden"
             onChange={handleFileSelect}
           />
+
+          <button
+            onClick={handlePickWorkingDirectory}
+            disabled={isRunning}
+            className="inline-flex items-center gap-1.5 max-w-[220px] px-2 py-1 rounded-lg text-xs
+              text-text-secondary hover:text-text-primary hover:bg-bg-secondary
+              disabled:opacity-40 disabled:cursor-not-allowed transition-smooth"
+            title={workingDirectory || t('input.selectFolder')}
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+              className="flex-shrink-0">
+              <path d="M2.5 4.5h4l1.2 1.5h5.8v6.5h-11z" />
+              <path d="M2.5 4.5v-1h4.4l1.1 1.3" />
+            </svg>
+            <span className="truncate">{workingDirectoryLabel}</span>
+          </button>
 
           {/* Mode selector — hidden, use /ask /plan /code /bypass slash commands */}
           {/* <ModeSelector disabled={isRunning} /> */}

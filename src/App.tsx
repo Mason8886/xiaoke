@@ -75,6 +75,7 @@ function App() {
   const backgroundTheme = useSettingsStore((s) => s.backgroundTheme);
   const fontSize = useSettingsStore((s) => s.fontSize);
   const fontFamily = useSettingsStore((s) => s.fontFamily);
+  const monoFontFollowsInterface = useSettingsStore((s) => s.monoFontFollowsInterface);
   const settingsOpen = useSettingsStore((s) => s.settingsOpen);
   const workingDirectory = useSettingsStore((s) => s.workingDirectory);
   const lastSeenVersion = useSettingsStore((s) => s.lastSeenVersion);
@@ -261,6 +262,10 @@ function App() {
     const stack = FONT_FAMILY_STACKS[fontFamily] || FONT_FAMILY_STACKS.microsoft;
     document.documentElement.style.setProperty('--tokenicode-font-family', stack);
   }, [fontFamily]);
+
+  useEffect(() => {
+    document.documentElement.dataset.monoFollowsInterface = monoFontFollowsInterface ? 'true' : 'false';
+  }, [monoFontFollowsInterface]);
 
   // Cmd+/- global shortcut for font size
   useEffect(() => {

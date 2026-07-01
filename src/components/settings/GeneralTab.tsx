@@ -135,6 +135,7 @@ export function GeneralTab() {
   const selectedModel = useSettingsStore((s) => s.selectedModel);
   const fontSize = useSettingsStore((s) => s.fontSize);
   const fontFamily = useSettingsStore((s) => s.fontFamily);
+  const monoFontFollowsInterface = useSettingsStore((s) => s.monoFontFollowsInterface);
   const setTheme = useSettingsStore((s) => s.setTheme);
   const setColorTheme = useSettingsStore((s) => s.setColorTheme);
   const setBackgroundTheme = useSettingsStore((s) => s.setBackgroundTheme);
@@ -142,6 +143,7 @@ export function GeneralTab() {
   const setSelectedModel = useSettingsStore((s) => s.setSelectedModel);
   const setFontSize = useSettingsStore((s) => s.setFontSize);
   const setFontFamily = useSettingsStore((s) => s.setFontFamily);
+  const setMonoFontFollowsInterface = useSettingsStore((s) => s.setMonoFontFollowsInterface);
   const aiAvatarUrl = useSettingsStore((s) => s.aiAvatarUrl);
   const setAiAvatarUrl = useSettingsStore((s) => s.setAiAvatarUrl);
   const userAvatarUrl = useSettingsStore((s) => s.userAvatarUrl);
@@ -396,6 +398,20 @@ export function GeneralTab() {
           <p className="mt-1 text-[11px] text-text-tertiary">
             {t('settings.fontFamilyHint')}
           </p>
+          <button
+            onClick={() => setMonoFontFollowsInterface(!monoFontFollowsInterface)}
+            className="mt-2 inline-flex items-center gap-2 text-[12px] text-text-secondary
+              hover:text-text-primary transition-smooth"
+          >
+            <span className={`relative w-8 h-4 rounded-full transition-smooth
+              ${monoFontFollowsInterface ? 'bg-accent/80' : 'bg-bg-tertiary border border-border-subtle'}`}
+            >
+              <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow-sm transition-transform
+                ${monoFontFollowsInterface ? 'translate-x-4' : 'translate-x-0.5'}`}
+              />
+            </span>
+            {t('settings.monoFontFollowsInterface')}
+          </button>
         </div>
 
         {/* Default Model */}

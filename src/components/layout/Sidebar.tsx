@@ -92,8 +92,6 @@ export function Sidebar() {
         // Deselect current session FIRST so background stream routing works
         useSessionStore.getState().setSelectedSession(null);
 
-        // Clear working directory so ChatPanel shows WelcomeScreen
-        useSettingsStore.getState().setWorkingDirectory('');
       }}
         className="w-full py-2.5 px-4 rounded-[20px] text-sm font-medium
           bg-accent hover:bg-accent-hover text-text-inverse
