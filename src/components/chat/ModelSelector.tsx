@@ -3,7 +3,7 @@ import { useSettingsStore, MODEL_OPTIONS } from '../../stores/settingsStore';
 import { useChatStore, generateMessageId } from '../../stores/chatStore';
 import { useSessionStore } from '../../stores/sessionStore';
 import { useProviderStore } from '../../stores/providerStore';
-import { displayDeepSeekModelName, normalizeDeepSeekModelName } from '../../lib/deepseek-models';
+import { displayProviderModelName, normalizeProviderModelName } from '../../lib/deepseek-models';
 
 /** Tier mapping from official ModelId to provider tier key */
 const TIER_MAP: Record<string, 'opus' | 'sonnet' | 'haiku'> = {
@@ -60,8 +60,8 @@ export function ModelSelector({ disabled = false }: { disabled?: boolean }) {
       const tier = TIER_MAP[m.id];
       const mapping = activeProvider.modelMappings.find((mm) => mm.tier === tier);
       if (mapping?.providerModel) {
-        const providerModel = normalizeDeepSeekModelName(mapping.providerModel);
-        const providerLabel = displayDeepSeekModelName(providerModel);
+        const providerModel = normalizeProviderModelName(mapping.providerModel);
+        const providerLabel = displayProviderModelName(providerModel);
         const label = providerLabel === m.short ? m.short : `${m.short} -> ${providerLabel}`;
         return { id: m.id, label, short: providerLabel, mapped: true, isExtra: false };
       }
@@ -72,8 +72,8 @@ export function ModelSelector({ disabled = false }: { disabled?: boolean }) {
     const extras: DisplayOption[] = activeProvider.modelMappings
       .filter((m) => !FIXED_TIERS.has(m.tier) && m.tier && m.providerModel)
       .map((m) => {
-        const providerModel = normalizeDeepSeekModelName(m.providerModel);
-        const providerLabel = displayDeepSeekModelName(providerModel);
+        const providerModel = normalizeProviderModelName(m.providerModel);
+        const providerLabel = displayProviderModelName(providerModel);
         const short = providerLabel.includes('/')
           ? providerLabel.split('/').pop()!
           : providerLabel;

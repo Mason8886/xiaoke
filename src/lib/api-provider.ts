@@ -1,6 +1,11 @@
 import { useProviderStore } from '../stores/providerStore';
 import type { ModelId } from '../stores/settingsStore';
-import { normalizeDeepSeekModelName } from './deepseek-models';
+import {
+  DEEPSEEK_V4_FLASH,
+  DEEPSEEK_V4_PRO,
+  normalizeDeepSeekModelName,
+  normalizeProviderModelName,
+} from './deepseek-models';
 
 /**
  * Result of model resolution — either a mapped model name or an error.
@@ -22,7 +27,7 @@ export function resolveModelOrError(selectedModel: string): ModelResolution {
     (m) => m.tier === selectedModel && m.providerModel,
   );
   if (directMapping?.providerModel) {
-    return { ok: true, model: normalizeDeepSeekModelName(directMapping.providerModel) };
+    return { ok: true, model: normalizeProviderModelName(directMapping.providerModel) };
   }
 
   // 2. Fall back to tier mapping
@@ -41,7 +46,7 @@ export function resolveModelOrError(selectedModel: string): ModelResolution {
   if (!mapping?.providerModel) {
     return { ok: false, reason: 'no_mapping', tier, providerName: provider.name };
   }
-  return { ok: true, model: normalizeDeepSeekModelName(mapping.providerModel) };
+  return { ok: true, model: normalizeProviderModelName(mapping.providerModel) };
 }
 
 /**
@@ -58,6 +63,17 @@ export function resolveModelForProvider(selectedModel: string): string {
   const r = resolveModelOrError(selectedModel);
   const model = r.ok ? r.model : selectedModel;
   return CLI_MODEL_MAP[model as ModelId] ?? model;
+}
+
+export function supportsDeepSeekThinking(model: string): boolean {
+  const normalized = normalizeProviderModelName(model);
+  return normalized === DEEPSEEK_V4_PRO || normalized === DEEPSEEK_V4_FLASH;
+}
+
+export function resolveThinkingLevelForProvider(selectedModel: string, requestedLevel: string): string {
+  if (requestedLevel === 'off') return 'off';
+  const resolvedModel = resolveModelForProvider(selectedModel);
+  return supportsDeepSeekThinking(resolvedModel) ? requestedLevel : 'off';
 }
 
 /**

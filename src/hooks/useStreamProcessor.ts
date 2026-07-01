@@ -5,7 +5,7 @@ import { useSessionStore } from '../stores/sessionStore';
 import { useAgentStore, resolveAgentId, getAgentDepth } from '../stores/agentStore';
 import { useFileStore } from '../stores/fileStore';
 import { bridge, onClaudeStream, onClaudeStderr } from '../lib/tauri-bridge';
-import { envFingerprint, resolveModelForProvider } from '../lib/api-provider';
+import { envFingerprint, resolveModelForProvider, resolveThinkingLevelForProvider } from '../lib/api-provider';
 import { useProviderStore } from '../stores/providerStore';
 import { t } from '../lib/i18n';
 
@@ -1548,7 +1548,10 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
                   model: resolveModelForProvider(selectedModel),
                   session_id: retryId,
                   // No resume_session_id — fresh start to avoid thinking signature issue
-                  thinking_level: useSettingsStore.getState().thinkingLevel,
+                  thinking_level: resolveThinkingLevelForProvider(
+                    selectedModel,
+                    useSettingsStore.getState().thinkingLevel,
+                  ),
                   session_mode: (sessionMode === 'ask' || sessionMode === 'plan') ? sessionMode : undefined,
                   provider_id: useProviderStore.getState().activeProviderId || undefined,
                   permission_mode: mapSessionModeToPermissionMode(sessionMode),

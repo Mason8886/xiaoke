@@ -35,6 +35,7 @@ interface SessionGroupProps {
   selectedIds: Set<string>;
   onToggleCollapse: (project: string) => void;
   onContextMenu: (e: React.MouseEvent, session: SessionListItem) => void;
+  onDelete: (session: SessionListItem) => void;
   onProjectContextMenu: (e: React.MouseEvent, project: string) => void;
   onLoadSession: (session: SessionListItem) => void;
   onRename: (sessionId: string, newName: string) => void;
@@ -59,6 +60,7 @@ export function SessionGroup({
   selectedIds,
   onToggleCollapse,
   onContextMenu,
+  onDelete,
   onProjectContextMenu,
   onLoadSession,
   onRename,
@@ -180,6 +182,7 @@ export function SessionGroup({
                   onSelect={onLoadSession}
                   onContextMenu={onContextMenu}
                   onRename={onRename}
+                  onDelete={onDelete}
                   onToggleCheck={onToggleCheck}
                   triggerRename={renamingSessionId === session.id}
                   onRenameDone={onRenameDone}
@@ -212,6 +215,7 @@ export function SessionGroup({
                   onSelect={onLoadSession}
                   onContextMenu={onContextMenu}
                   onRename={onRename}
+                  onDelete={onDelete}
                   onToggleCheck={onToggleCheck}
                   triggerRename={renamingSessionId === session.id}
                   onRenameDone={onRenameDone}

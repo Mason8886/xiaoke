@@ -4,7 +4,7 @@ import { bridge, type ConnectionTestResult } from '../../lib/tauri-bridge';
 import { useT } from '../../lib/i18n';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { PROVIDER_PRESETS } from '../../lib/provider-presets';
-import { normalizeDeepSeekModelName } from '../../lib/deepseek-models';
+import { normalizeProviderModelName } from '../../lib/deepseek-models';
 
 const MODEL_TIERS: { tier: 'opus' | 'sonnet'; labelKey: string; placeholderKey: string }[] = [
   { tier: 'opus', labelKey: 'provider.opusModel', placeholderKey: 'provider.opusPlaceholder' },
@@ -89,17 +89,17 @@ export function ProviderForm({ provider, onClose, onDelete, autoTest, onTestStat
   const handleApiKeyChange = (v: string) => { setApiKey(v); autoSave({ apiKey: v || undefined }); };
   const handleProxyUrlChange = (v: string) => { setProxyUrl(v); autoSave({ proxyUrl: v || undefined }); };
   // API format selector hidden from UI — kept for backward compat
-  const _handleApiFormatChange = (v: 'anthropic' | 'openai') => { setApiFormat(v); autoSave({ apiFormat: v }); }; void _handleApiFormatChange;
+  const handleApiFormatChange = (v: 'anthropic' | 'openai') => { setApiFormat(v); autoSave({ apiFormat: v }); };
 
   const FIXED_TIERS = new Set(['opus', 'sonnet', 'haiku']);
 
   const getMapping = (tier: string): string => {
-    return normalizeDeepSeekModelName(mappings.find((m) => m.tier === tier)?.providerModel || '');
+    return normalizeProviderModelName(mappings.find((m) => m.tier === tier)?.providerModel || '');
   };
 
   const updateMapping = (tier: string, value: string) => {
     const updated = mappings.filter((m) => m.tier !== tier && !(tier === 'sonnet' && m.tier === 'haiku'));
-    const providerModel = normalizeDeepSeekModelName(value);
+    const providerModel = normalizeProviderModelName(value);
     if (providerModel) {
       updated.push({ tier, providerModel });
       if (tier === 'sonnet') {
@@ -120,7 +120,7 @@ export function ProviderForm({ provider, onClose, onDelete, autoTest, onTestStat
 
   /** Update extra model: tier and providerModel are always the same value */
   const updateExtraModel = (oldTier: string, modelName: string) => {
-    const providerModel = normalizeDeepSeekModelName(modelName);
+    const providerModel = normalizeProviderModelName(modelName);
     const updated = mappings.map((m) =>
       m.tier === oldTier && !FIXED_TIERS.has(m.tier) ? { tier: providerModel, providerModel } : m,
     );
@@ -158,7 +158,7 @@ export function ProviderForm({ provider, onClose, onDelete, autoTest, onTestStat
     setTestTimeMs(null);
     setTestResult(null);
     try {
-      const testModel = normalizeDeepSeekModelName(mappings.find((m) => m.providerModel)?.providerModel || '');
+      const testModel = normalizeProviderModelName(mappings.find((m) => m.providerModel)?.providerModel || '');
       if (!testModel) {
         setTestStatus('failed');
         setTestError(t('provider.testNoModel'));
@@ -306,6 +306,26 @@ export function ProviderForm({ provider, onClose, onDelete, autoTest, onTestStat
 
       {/* API Format — hidden from UI, defaults to anthropic.
           Existing providers with 'openai' format still work via stored config. */}
+
+      <div>
+        <label className="text-xs text-text-muted mb-1 block">{t('provider.format')}</label>
+        <div className="grid grid-cols-2 gap-1 rounded-lg border border-border-subtle bg-bg-chat p-1">
+          {(['openai', 'anthropic'] as const).map((format) => (
+            <button
+              key={format}
+              onClick={() => handleApiFormatChange(format)}
+              className={`px-2 py-1.5 rounded-md text-xs font-medium transition-smooth
+                ${apiFormat === format
+                  ? 'bg-accent/10 text-accent'
+                  : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'
+                }`}
+            >
+              {format === 'openai' ? t('provider.formatOpenaiShort') : t('provider.formatAnthropicShort')}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-text-tertiary mt-1">{t('provider.formatHint')}</p>
+      </div>
 
       {/* API Key */}
       <div>

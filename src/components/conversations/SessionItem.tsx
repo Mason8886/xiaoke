@@ -59,6 +59,7 @@ interface SessionItemProps {
   onSelect: (session: SessionListItem) => void;
   onContextMenu: (e: React.MouseEvent, session: SessionListItem) => void;
   onRename: (sessionId: string, newName: string) => void;
+  onDelete?: (session: SessionListItem) => void;
   onToggleCheck?: (sessionId: string, shiftKey?: boolean) => void;
   contentSnippet?: string;
   matchCount?: number;
@@ -79,6 +80,7 @@ export function SessionItem({
   onSelect,
   onContextMenu,
   onRename,
+  onDelete,
   contentSnippet,
   matchCount,
   searchQuery,
@@ -208,6 +210,34 @@ export function SessionItem({
         <span className="text-[10px] text-text-tertiary flex-shrink-0">
           {formatRelativeTime(session.modifiedAt)}
         </span>
+        {!multiSelect && !isRenaming && onDelete && (
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(session);
+            }}
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(session);
+            }}
+            className="flex-shrink-0 p-0.5 rounded text-text-tertiary opacity-0
+              group-hover:opacity-100 hover:text-error hover:bg-error/10 transition-smooth"
+            title={t('conv.delete')}
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"
+              stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 4h10" />
+              <path d="M6 4V2.8h4V4" />
+              <path d="M5 6v7h6V6" />
+              <path d="M7 7.5v4M9 7.5v4" />
+            </svg>
+          </span>
+        )}
         {isRunning && (
           <span className="flex-shrink-0 w-2 h-2 rounded-full bg-success
             shadow-[0_0_6px_var(--color-accent-glow)]

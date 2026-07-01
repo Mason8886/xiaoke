@@ -24,8 +24,27 @@ export function normalizeDeepSeekModelName(model: string | undefined | null): st
   return trimmed;
 }
 
+export function normalizeProviderModelName(model: string | undefined | null): string {
+  if (!model) return '';
+
+  const trimmed = model.trim();
+  const compact = trimmed.toLowerCase().replace(/[\s_.()[\]-]/g, '');
+
+  if (compact.includes('deepseekv4pro')) return DEEPSEEK_V4_PRO;
+  if (compact.includes('deepseekv4flash')) return DEEPSEEK_V4_FLASH;
+
+  return trimmed;
+}
+
 export function displayDeepSeekModelName(model: string | undefined | null): string {
   const normalized = normalizeDeepSeekModelName(model);
+  if (normalized === DEEPSEEK_V4_PRO) return DEEPSEEK_V4_PRO_LABEL;
+  if (normalized === DEEPSEEK_V4_FLASH) return DEEPSEEK_V4_FLASH_LABEL;
+  return normalized;
+}
+
+export function displayProviderModelName(model: string | undefined | null): string {
+  const normalized = normalizeProviderModelName(model);
   if (normalized === DEEPSEEK_V4_PRO) return DEEPSEEK_V4_PRO_LABEL;
   if (normalized === DEEPSEEK_V4_FLASH) return DEEPSEEK_V4_FLASH_LABEL;
   return normalized;

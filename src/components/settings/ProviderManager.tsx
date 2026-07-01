@@ -7,7 +7,7 @@ import { parseAndValidate, importAsProvider, exportProvider } from '../../lib/ap
 import { AddProviderMenu } from './AddProviderMenu';
 import { ProviderCard, type CardTestStatus } from './ProviderCard';
 import { ProviderForm, type TestStatus } from './ProviderForm';
-import { DEEPSEEK_V4_FLASH, DEEPSEEK_V4_PRO, normalizeDeepSeekModelName } from '../../lib/deepseek-models';
+import { DEEPSEEK_V4_FLASH, DEEPSEEK_V4_PRO, normalizeProviderModelName } from '../../lib/deepseek-models';
 
 export function ProviderManager({ alwaysExpanded = false }: { alwaysExpanded?: boolean } = {}) {
   const t = useT();
@@ -66,7 +66,7 @@ export function ProviderManager({ alwaysExpanded = false }: { alwaysExpanded?: b
     addProvider({
       name: '',
       baseUrl: '',
-      apiFormat: 'anthropic',
+      apiFormat: 'openai',
       modelMappings: [
         { tier: 'opus', providerModel: DEEPSEEK_V4_PRO },
         { tier: 'sonnet', providerModel: DEEPSEEK_V4_FLASH },
@@ -133,7 +133,7 @@ export function ProviderManager({ alwaysExpanded = false }: { alwaysExpanded?: b
     setCardTestStatuses((prev) => ({ ...prev, [providerId]: 'testing' }));
     setCardTestTimes((prev) => { const next = { ...prev }; delete next[providerId]; return next; });
 
-    const testModel = normalizeDeepSeekModelName(p.modelMappings.find((m) => m.providerModel)?.providerModel || '');
+    const testModel = normalizeProviderModelName(p.modelMappings.find((m) => m.providerModel)?.providerModel || '');
     if (!testModel || !p.apiKey) {
       setCardTestStatuses((prev) => ({ ...prev, [providerId]: 'failed' }));
       return;

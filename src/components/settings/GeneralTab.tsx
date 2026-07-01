@@ -2,7 +2,7 @@ import { useRef, useCallback, useState } from 'react';
 import { useSettingsStore, MODEL_OPTIONS, ColorTheme, BackgroundTheme, FontFamily } from '../../stores/settingsStore';
 import { useProviderStore } from '../../stores/providerStore';
 import { useT } from '../../lib/i18n';
-import { displayDeepSeekModelName } from '../../lib/deepseek-models';
+import { displayProviderModelName } from '../../lib/deepseek-models';
 import { AiAvatar } from '../shared/AiAvatar';
 import { UserAvatar } from '../shared/UserAvatar';
 import { AvatarCropModal } from './AvatarCropModal';
@@ -161,7 +161,7 @@ export function GeneralTab() {
   const actualModel = selectedMapping?.providerModel || selectedModel;
   const tierMappings = activeProvider?.modelMappings
     .filter((m) => ['opus', 'sonnet', 'haiku'].includes(m.tier) && m.providerModel)
-    .map((m) => `${m.tier}=${displayDeepSeekModelName(m.providerModel)}`)
+    .map((m) => `${m.tier}=${displayProviderModelName(m.providerModel)}`)
     .join(' / ');
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>, target: 'ai' | 'user') => {
@@ -439,13 +439,13 @@ export function GeneralTab() {
                   if (!activeProvider) return model.short;
                   const tier = TIER_MAP[model.id];
                   const mapping = activeProvider.modelMappings.find((mm) => mm.tier === tier);
-                  return mapping?.providerModel ? displayDeepSeekModelName(mapping.providerModel) : model.short;
+                  return mapping?.providerModel ? displayProviderModelName(mapping.providerModel) : model.short;
                 })()}
               </button>
             ))}
           </div>
           <div className="mt-2 text-xs text-text-tertiary leading-relaxed">
-            Actual model: <span className="font-mono text-text-muted">{displayDeepSeekModelName(actualModel)}</span>
+            Actual model: <span className="font-mono text-text-muted">{displayProviderModelName(actualModel)}</span>
             {activeProvider && tierMappings && (
               <span className="ml-2">Mappings: {tierMappings}</span>
             )}

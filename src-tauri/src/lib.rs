@@ -855,6 +855,24 @@ struct ConnectionTestResult {
     model: StepResult,
 }
 
+fn provider_messages_endpoint(base_url: &str, api_format: &str) -> String {
+    let base = base_url.trim().trim_end_matches('/');
+    let lower = base.to_lowercase();
+    if api_format.eq_ignore_ascii_case("openai") {
+        if lower.ends_with("/chat/completions") {
+            base.to_string()
+        } else {
+            format!("{}/chat/completions", base)
+        }
+    } else if lower.ends_with("/v1/messages") {
+        base.to_string()
+    } else if lower.ends_with("/v1") {
+        format!("{}/messages", base)
+    } else {
+        format!("{}/v1/messages", base)
+    }
+}
+
 #[tauri::command]
 async fn test_provider_connection(
     base_url: String,
@@ -907,18 +925,13 @@ async fn test_provider_connection(
         .await
     };
 
-    let base = base_url.trim_end_matches('/');
     let skipped = StepResult {
         ok: false,
         message: "Skipped".to_string(),
     };
 
     // Step 1: Connectivity — HEAD request to base URL without auth
-    let connectivity_url = if api_format == "openai" {
-        format!("{}/chat/completions", base)
-    } else {
-        format!("{}/v1/messages", base)
-    };
+    let connectivity_url = provider_messages_endpoint(&base_url, &api_format);
     let conn_result = client
         .head(&connectivity_url)
         .timeout(std::time::Duration::from_secs(5))
@@ -4207,11 +4220,10 @@ async fn translate_skill_metadata(
         items_json
     );
 
-    let base = provider.base_url.trim_end_matches('/');
     let api_format = provider.api_format.to_lowercase();
     let (url, body) = if api_format == "openai" {
         (
-            format!("{}/chat/completions", base),
+            provider_messages_endpoint(&provider.base_url, &api_format),
             serde_json::json!({
                 "model": model,
                 "temperature": 0,
@@ -4223,7 +4235,7 @@ async fn translate_skill_metadata(
         )
     } else {
         (
-            format!("{}/v1/messages", base),
+            provider_messages_endpoint(&provider.base_url, &api_format),
             serde_json::json!({
                 "model": model,
                 "max_tokens": 4096,
@@ -4356,11 +4368,10 @@ async fn translate_skill_markdown(
         content
     );
 
-    let base = provider.base_url.trim_end_matches('/');
     let api_format = provider.api_format.to_lowercase();
     let (url, body) = if api_format == "openai" {
         (
-            format!("{}/chat/completions", base),
+            provider_messages_endpoint(&provider.base_url, &api_format),
             serde_json::json!({
                 "model": model,
                 "temperature": 0,
@@ -4372,7 +4383,7 @@ async fn translate_skill_markdown(
         )
     } else {
         (
-            format!("{}/v1/messages", base),
+            provider_messages_endpoint(&provider.base_url, &api_format),
             serde_json::json!({
                 "model": model,
                 "max_tokens": 8192,

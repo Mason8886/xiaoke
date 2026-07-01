@@ -14,7 +14,7 @@ import { useSessionStore } from '../../stores/sessionStore';
 import { useT } from '../../lib/i18n';
 import { SlashCommandPopover, getFilteredCommandList } from './SlashCommandPopover';
 import { useCommandStore } from '../../stores/commandStore';
-import { envFingerprint, resolveModelForProvider, resolveModelOrError } from '../../lib/api-provider';
+import { envFingerprint, resolveModelForProvider, resolveModelOrError, resolveThinkingLevelForProvider } from '../../lib/api-provider';
 import { useProviderStore } from '../../stores/providerStore';
 import { PROVIDER_PRESETS } from '../../lib/provider-presets';
 import { displayDeepSeekModelName } from '../../lib/deepseek-models';
@@ -1081,6 +1081,10 @@ export function InputBar() {
         // Read sessionMode from store (not closure) so plan-approve → code
         // mode switch is visible even when called via rAF.
         const liveSessionMode = useSettingsStore.getState().sessionMode;
+        const liveThinkingLevel = resolveThinkingLevelForProvider(
+          selectedModel,
+          useSettingsStore.getState().thinkingLevel,
+        );
         console.log('[TOKENICODE:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: useProviderStore.getState().activeProviderId });
         const session = await bridge.startSession({
           prompt: text,
@@ -1088,7 +1092,7 @@ export function InputBar() {
           model: resolveModelForProvider(selectedModel),
           session_id: preGeneratedId,
           resume_session_id: existingSessionId || undefined,
-          thinking_level: useSettingsStore.getState().thinkingLevel,
+          thinking_level: liveThinkingLevel,
           session_mode: (liveSessionMode === 'ask' || liveSessionMode === 'plan') ? liveSessionMode : undefined,
           provider_id: useProviderStore.getState().activeProviderId || undefined,
           permission_mode: mapSessionModeToPermissionMode(liveSessionMode),

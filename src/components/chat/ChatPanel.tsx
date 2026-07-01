@@ -14,7 +14,7 @@ import { AgentPanel } from '../agents/AgentPanel';
 import { bridge, onClaudeStream, onClaudeStderr } from '../../lib/tauri-bridge';
 import { open } from '@tauri-apps/plugin-dialog';
 import { useT } from '../../lib/i18n';
-import { envFingerprint, resolveModelForProvider } from '../../lib/api-provider';
+import { envFingerprint, resolveModelForProvider, resolveThinkingLevelForProvider } from '../../lib/api-provider';
 import { useProviderStore } from '../../stores/providerStore';
 import { MarkdownRenderer } from '../shared/MarkdownRenderer';
 import { SetupWizard } from '../setup/SetupWizard';
@@ -883,12 +883,16 @@ async function startDraftSession(folderPath: string) {
       unlistenStderr();
     };
 
+    const selectedModel = useSettingsStore.getState().selectedModel;
     const session = await bridge.startSession({
       prompt: '',  // empty = pre-warm, no message sent
       cwd: folderPath,
-      model: resolveModelForProvider(useSettingsStore.getState().selectedModel),
+      model: resolveModelForProvider(selectedModel),
       session_id: preWarmId,
-      thinking_level: useSettingsStore.getState().thinkingLevel,
+      thinking_level: resolveThinkingLevelForProvider(
+        selectedModel,
+        useSettingsStore.getState().thinkingLevel,
+      ),
       provider_id: useProviderStore.getState().activeProviderId || undefined,
       permission_mode: mapSessionModeToPermissionMode(useSettingsStore.getState().sessionMode),
     });
@@ -899,7 +903,7 @@ async function startDraftSession(folderPath: string) {
       sessionId: session.session_id,
       stdinId: preWarmId,
       envFingerprint: envFingerprint(),
-      spawnedModel: resolveModelForProvider(useSettingsStore.getState().selectedModel),
+      spawnedModel: resolveModelForProvider(selectedModel),
     });
 
     // Register stdinId → tabId mapping for background stream routing

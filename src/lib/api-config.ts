@@ -1,5 +1,5 @@
 import { useProviderStore, type ApiProvider } from '../stores/providerStore';
-import { normalizeDeepSeekModelName } from './deepseek-models';
+import { normalizeProviderModelName } from './deepseek-models';
 
 /**
  * Canonical JSON format for API provider config import/export (v2).
@@ -34,7 +34,7 @@ export function exportProvider(provider: ApiProvider): string {
       ...(provider.apiKey ? { apiKey: provider.apiKey } : {}),
       modelMappings: provider.modelMappings
         .filter((m) => m.providerModel)
-        .map((m) => ({ tier: m.tier, model: normalizeDeepSeekModelName(m.providerModel) })),
+        .map((m) => ({ tier: m.tier, model: normalizeProviderModelName(m.providerModel) })),
       ...(provider.extra_env && Object.keys(provider.extra_env).length > 0
         ? { extra_env: provider.extra_env }
         : {}),
@@ -126,7 +126,7 @@ export function parseAndValidate(
     if (!validTiers.includes(tier)) {
       return { ok: false, error: `无效的模型层级：${tier}，仅支持 opus / sonnet / haiku` };
     }
-    const model = normalizeDeepSeekModelName(String(m.model ?? m.providerModel ?? ''));
+    const model = normalizeProviderModelName(String(m.model ?? m.providerModel ?? ''));
     mappings.push({ tier: tier as 'opus' | 'sonnet' | 'haiku', providerModel: model });
   }
 

@@ -395,9 +395,8 @@ export function ConversationList() {
         useSessionStore.getState().removeDraft(sessionId);
       }
       if (selectedId === sessionId) {
-        setSelected('');
+        setSelected(null);
         useChatStore.getState().resetTab(sessionId);
-        useSettingsStore.getState().setWorkingDirectory('');
       }
       useChatStore.getState().removeFromCache(sessionId);
       fetchSessions();
@@ -669,6 +668,7 @@ export function ConversationList() {
           selectedIds={selectedIds}
           onToggleCollapse={toggleCollapse}
           onContextMenu={handleContextMenu}
+          onDelete={handleDeleteSingle}
           onProjectContextMenu={handleProjectContextMenu}
           onLoadSession={handleLoadSession}
           onRename={handleRename}
@@ -709,6 +709,7 @@ export function ConversationList() {
                 onSelect={handleLoadSession}
                 onContextMenu={handleContextMenu}
                 onRename={handleRename}
+                onDelete={handleDeleteSingle}
                 onToggleCheck={handleToggleCheck}
                 triggerRename={renamingSessionId === session.id}
                 onRenameDone={() => setRenamingSessionId(null)}

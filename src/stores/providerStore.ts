@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { bridge, type ProvidersFile } from '../lib/tauri-bridge';
-import { normalizeDeepSeekModelName } from '../lib/deepseek-models';
+import { normalizeProviderModelName } from '../lib/deepseek-models';
 
 export interface ModelMapping {
   /** Standard tier ('opus'|'sonnet'|'haiku') or a specific model ID for direct mapping */
@@ -54,7 +54,7 @@ function normalizeProvider(p: ApiProvider): ApiProvider {
     ...p,
     modelMappings: p.modelMappings.map((m) => ({
       ...m,
-      providerModel: normalizeDeepSeekModelName(m.providerModel),
+      providerModel: normalizeProviderModelName(m.providerModel),
     })),
   };
 }
