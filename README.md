@@ -1,5 +1,25 @@
 # TOKENICODE DeepSeek Alpha
 
+## 更新记录
+
+### v0.10.2-alpha.1
+
+- 新增“本地模型”设置页。
+- 支持检测本机 Ollama 服务与已安装模型。
+- 支持在界面里输入 Ollama 模型名并下载，例如 `qwen2.5-coder:7b`、`deepseek-r1:7b`。
+- 下载模型时显示 Ollama 输出进度。
+- 已安装模型可以一键设为本地 API Provider，自动使用 OpenAI 兼容端点 `http://localhost:11434/v1`。
+- 本机便携版 `D:\TOKENICODE\tokenicode.exe` 已同步更新到 `0.10.2`。
+
+### v0.10.1-alpha.1
+
+- 将应用内“检查更新”源切换到本仓库 `mistydew/tokenicode-deepseek-alpha`。
+- 新增本项目自己的 Tauri updater 签名配置。
+- 发布 Windows x64 安装包、便携 exe、zip、`latest.json` 和 SHA256 校验文件。
+- 修复旧更新入口仍指向原版 TOKENICODE 项目的问题。
+
+> 后续每次发布新版，都会在这里继续追加更新说明。
+
 一个面向 DeepSeek / CC Switch 使用场景的 TOKENICODE 魔改版。它保留 TOKENICODE 的桌面 GUI、会话管理、文件浏览和 Claude Code CLI 工作流，同时把模型显示、第三方 API、Skills 管理和翻译体验做了更适合本地使用的改造。
 
 > 本项目基于 [TOKENICODE](https://github.com/yiliqi78/TOKENICODE) 修改而来。感谢原作者 TinyZ / yiliqi78 以及 TOKENICODE 项目的开源工作。本仓库保留原项目 Apache License 2.0 授权与 attribution，详见 [LICENSE](LICENSE) 和 [NOTICE](NOTICE)。
