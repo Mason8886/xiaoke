@@ -963,6 +963,63 @@ input, textarea, [contenteditable="true"],
   --color-icon-slash: #FFFFFF;
 }
 
+.bg-theme-minimal {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F7F7F8;
+  --color-bg-tertiary: #EFEFF1;
+  --color-bg-chat: #FFFFFF;
+  --color-bg-sidebar: #F7F7F8;
+  --color-bg-input: #FFFFFF;
+  --color-bg-user-msg: #111827;
+  --color-bg-assistant-msg: #FFFFFF;
+  --color-bg-tool: #F7F7F8;
+  --color-bg-thinking: #F7F7F8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-nav-active: rgba(17, 24, 39, 0.06);
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+  --color-text-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-border-subtle: #ECEEF2;
+  --color-border-focus: #111827;
+  --color-accent: #111827;
+  --color-accent-light: #374151;
+  --color-accent-hover: #030712;
+  --color-accent-glow: rgba(17, 24, 39, 0.08);
+  --color-success: #059669;
+  --color-error: #DC2626;
+  --color-warning: #D97706;
+  --color-gradient-start: #111827;
+  --color-gradient-mid: #1F2937;
+  --color-gradient-end: #374151;
+  --skin-body-background: #FFFFFF;
+  --skin-app-background: #FFFFFF;
+  --skin-border-strong: #E5E7EB;
+  --skin-border-soft: #ECEEF2;
+  --skin-dashed-border: transparent;
+  --skin-decor: "";
+  --skin-decor-color: transparent;
+  --skin-grid-line-a: transparent;
+  --skin-grid-line-b: transparent;
+  --skin-accent-gradient: linear-gradient(180deg, #1F2937 0%, #111827 100%);
+  --skin-accent-border: rgba(17, 24, 39, 0.18);
+  --skin-hover-bg: #F3F4F6;
+  --skin-table-head: #F9FAFB;
+  --skin-resize-bg: #F3F4F6;
+  --skin-resize-line: #E5E7EB;
+  --skin-scrollbar: #D1D5DB;
+  --skin-accent-text: #111827;
+  --skin-warning-text: #D97706;
+  --skin-success-text: #059669;
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.06);
+  --shadow-lg: 0 16px 42px rgba(17, 24, 39, 0.08);
+  --shadow-glow: none;
+  --color-icon-slash: #FFFFFF;
+}
+
 body {
   font-family: var(--tokenicode-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif);
   background: var(--skin-body-background);
@@ -1051,6 +1108,29 @@ button {
 .bg-theme-vscode .bg-bg-primary,
 .bg-theme-vscode .bg-bg-card,
 .bg-theme-vscode .bg-bg-input {
+  background-image: none;
+}
+
+.bg-theme-minimal button {
+  text-shadow: none;
+}
+
+.bg-theme-minimal .gradient-bg {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.bg-theme-minimal .gradient-bg::before,
+.bg-theme-minimal .gradient-bg::after {
+  display: none;
+}
+
+.bg-theme-minimal .bg-bg-sidebar,
+.bg-theme-minimal .bg-bg-chat,
+.bg-theme-minimal .bg-bg-primary,
+.bg-theme-minimal .bg-bg-card,
+.bg-theme-minimal .bg-bg-input {
   background-image: none;
 }
 

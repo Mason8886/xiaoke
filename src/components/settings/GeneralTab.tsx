@@ -78,6 +78,12 @@ const BACKGROUND_THEMES: { id: BackgroundTheme; label: string; accent: string; p
     accent: '#007ACC',
     preview: 'linear-gradient(90deg, #252526 0 24%, #1E1E1E 24% 100%)',
   },
+  {
+    id: 'minimal',
+    label: '纯白简约',
+    accent: '#111827',
+    preview: 'linear-gradient(90deg, #F7F7F8 0 24%, #FFFFFF 24% 100%)',
+  },
 ];
 
 const FONT_FAMILY_OPTIONS: { id: FontFamily; label: string; sample: string }[] = [
