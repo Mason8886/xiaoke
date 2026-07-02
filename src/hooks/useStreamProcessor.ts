@@ -1762,7 +1762,11 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
         const compactStdinId = compactMeta?.stdinId;
         const compactModel = compactMeta?.spawnedModel || compactMeta?.snapshotModel || useSettingsStore.getState().selectedModel;
         const compactMode = compactMeta?.snapshotContextWindowMode ?? useSettingsStore.getState().contextWindowMode;
-        const autoCompactThreshold = getAutoCompactThreshold(compactModel, compactMode);
+        const autoCompactThreshold = getAutoCompactThreshold(
+          compactModel,
+          compactMode,
+          useSettingsStore.getState().autoCompactThresholdTokens,
+        );
         if (resultInputTokens > autoCompactThreshold && !autoCompactFiredRef.current && compactStdinId && msg.subtype === 'success') {
           autoCompactFiredRef.current = true;
           console.log('[TOKENICODE] Auto-compact triggered:', { inputTokens: resultInputTokens, threshold: autoCompactThreshold });

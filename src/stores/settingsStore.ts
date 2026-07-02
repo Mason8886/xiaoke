@@ -33,6 +33,15 @@ export function mapSessionModeToPermissionMode(mode: SessionMode): CliPermission
 export type ThinkingLevel = 'off' | 'low' | 'medium' | 'high' | 'max';
 export type ContextWindowMode = 'default' | 'large1m';
 
+function defaultAutoCompactThreshold(mode: ContextWindowMode): number {
+  return mode === 'large1m' ? 800_000 : 160_000;
+}
+
+function clampAutoCompactThreshold(tokens: number): number {
+  if (!Number.isFinite(tokens)) return 160_000;
+  return Math.max(10_000, Math.min(1_000_000, Math.round(tokens)));
+}
+
 // --- Model options (display mapping) ---
 
 export const MODEL_OPTIONS: { id: ModelId; label: string; short: string }[] = [
@@ -79,6 +88,8 @@ interface SettingsState {
   thinkingLevel: ThinkingLevel;
   /** Declares that the selected/provider model supports a 1M context window. */
   contextWindowMode: ContextWindowMode;
+  /** User-adjustable auto compact threshold in tokens. */
+  autoCompactThresholdTokens: number;
   /** Whether a newer version is available (set by auto-check on startup) */
   updateAvailable: boolean;
   /** Whether a newer CLI version is available */
@@ -127,6 +138,7 @@ interface SettingsState {
   setSetupCompleted: (completed: boolean) => void;
   setThinkingLevel: (level: ThinkingLevel) => void;
   setContextWindowMode: (mode: ContextWindowMode) => void;
+  setAutoCompactThresholdTokens: (tokens: number) => void;
   setUpdateAvailable: (available: boolean, version?: string) => void;
   setUpdateDownloaded: (downloaded: boolean) => void;
   setLastSeenVersion: (version: string) => void;
@@ -170,6 +182,7 @@ export const useSettingsStore = create<SettingsState>()(
       setupCompleted: false,
       thinkingLevel: 'medium' as ThinkingLevel,
       contextWindowMode: 'default',
+      autoCompactThresholdTokens: 160_000,
       updateAvailable: false,
       updateVersion: '',
       cliUpdateAvailable: false,
@@ -257,7 +270,19 @@ export const useSettingsStore = create<SettingsState>()(
         set(() => ({ thinkingLevel: level })),
 
       setContextWindowMode: (contextWindowMode) =>
-        set(() => ({ contextWindowMode })),
+        set((state) => {
+          const oldDefault = defaultAutoCompactThreshold(state.contextWindowMode);
+          const nextDefault = defaultAutoCompactThreshold(contextWindowMode);
+          return {
+            contextWindowMode,
+            ...(state.autoCompactThresholdTokens === oldDefault
+              ? { autoCompactThresholdTokens: nextDefault }
+              : {}),
+          };
+        }),
+
+      setAutoCompactThresholdTokens: (autoCompactThresholdTokens) =>
+        set(() => ({ autoCompactThresholdTokens: clampAutoCompactThreshold(autoCompactThresholdTokens) })),
 
       setUpdateAvailable: (available, version) =>
         set(() => ({
@@ -285,7 +310,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'tokenicode-settings',
-      version: 10,
+      version: 11,
       migrate: (persistedState: unknown, version: number) => {
         const persisted = persistedState as Record<string, unknown>;
         if (version === 0) {
@@ -343,6 +368,10 @@ export const useSettingsStore = create<SettingsState>()(
         if (version < 10) {
           persisted.contextWindowMode = 'default';
         }
+        if (version < 11) {
+          const mode = persisted.contextWindowMode === 'large1m' ? 'large1m' : 'default';
+          persisted.autoCompactThresholdTokens = defaultAutoCompactThreshold(mode);
+        }
         return persisted;
       },
       partialize: (state) => ({
@@ -362,6 +391,7 @@ export const useSettingsStore = create<SettingsState>()(
         setupCompleted: state.setupCompleted,
         thinkingLevel: state.thinkingLevel,
         contextWindowMode: state.contextWindowMode,
+        autoCompactThresholdTokens: state.autoCompactThresholdTokens,
         updateAvailable: state.updateAvailable,
         updateVersion: state.updateVersion,
         lastSeenVersion: state.lastSeenVersion,
@@ -403,7 +433,10 @@ export function getContextWindowForModel(model?: string, mode?: ContextWindowMod
   return isLargeContextMode(model, mode) ? 1_000_000 : 200_000;
 }
 
-export function getAutoCompactThreshold(model?: string, mode?: ContextWindowMode): number {
+export function getAutoCompactThreshold(model?: string, mode?: ContextWindowMode, overrideTokens?: number): number {
+  if (typeof overrideTokens === 'number') {
+    return clampAutoCompactThreshold(overrideTokens);
+  }
   return getContextWindowForModel(model, mode) >= 1_000_000 ? 800_000 : 160_000;
 }
 

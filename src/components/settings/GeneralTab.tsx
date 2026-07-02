@@ -148,6 +148,7 @@ export function GeneralTab() {
   const locale = useSettingsStore((s) => s.locale);
   const selectedModel = useSettingsStore((s) => s.selectedModel);
   const contextWindowMode = useSettingsStore((s) => s.contextWindowMode);
+  const autoCompactThresholdTokens = useSettingsStore((s) => s.autoCompactThresholdTokens);
   const fontSize = useSettingsStore((s) => s.fontSize);
   const fontFamily = useSettingsStore((s) => s.fontFamily);
   const monoFontFollowsInterface = useSettingsStore((s) => s.monoFontFollowsInterface);
@@ -157,6 +158,7 @@ export function GeneralTab() {
   const setLocale = useSettingsStore((s) => s.setLocale);
   const setSelectedModel = useSettingsStore((s) => s.setSelectedModel);
   const setContextWindowMode = useSettingsStore((s) => s.setContextWindowMode);
+  const setAutoCompactThresholdTokens = useSettingsStore((s) => s.setAutoCompactThresholdTokens);
   const setFontSize = useSettingsStore((s) => s.setFontSize);
   const setFontFamily = useSettingsStore((s) => s.setFontFamily);
   const setMonoFontFollowsInterface = useSettingsStore((s) => s.setMonoFontFollowsInterface);
@@ -176,7 +178,7 @@ export function GeneralTab() {
     : undefined;
   const actualModel = selectedMapping?.providerModel || selectedModel;
   const contextWindow = getContextWindowForModel(actualModel, contextWindowMode);
-  const compactThreshold = getAutoCompactThreshold(actualModel, contextWindowMode);
+  const compactThreshold = getAutoCompactThreshold(actualModel, contextWindowMode, autoCompactThresholdTokens);
   const tierMappings = activeProvider?.modelMappings
     .filter((m) => ['opus', 'sonnet', 'haiku'].includes(m.tier) && m.providerModel)
     .map((m) => `${m.tier}=${displayProviderModelName(m.providerModel)}`)
@@ -492,6 +494,42 @@ export function GeneralTab() {
           <p className="mt-2 text-xs text-text-tertiary leading-relaxed">
             当前声明：{contextWindow.toLocaleString()} tokens；自动 compact 阈值：{compactThreshold.toLocaleString()} tokens。
             如果你的 CC Switch / DeepSeek 路由实际支持 1M，请选择“声明 1M”。
+          </p>
+        </div>
+
+        {/* Auto compact threshold */}
+        <div>
+          <h3 className="text-[13px] font-medium text-text-primary mb-2">自动 compact 阈值</h3>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min={10}
+              max={1000}
+              step={10}
+              value={Math.round(autoCompactThresholdTokens / 1000)}
+              onChange={(e) => setAutoCompactThresholdTokens(Number(e.target.value) * 1000)}
+              className="w-28 px-3 py-2 text-[13px] bg-bg-chat border border-border-subtle
+                rounded-lg text-text-primary focus:outline-none focus:border-accent"
+            />
+            <span className="text-xs text-text-tertiary">K tokens</span>
+            <div className="flex flex-wrap gap-1.5">
+              {[160, 400, 800, 950].map((value) => (
+                <button
+                  key={value}
+                  onClick={() => setAutoCompactThresholdTokens(value * 1000)}
+                  className={`px-2 py-1 rounded-md text-[11px] border transition-smooth
+                    ${Math.round(autoCompactThresholdTokens / 1000) === value
+                      ? 'bg-accent/10 text-accent border-accent/30'
+                      : 'text-text-muted hover:bg-bg-secondary border-border-subtle'
+                    }`}
+                >
+                  {value}K
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-text-tertiary leading-relaxed">
+            这个值会直接决定自动发送 `/compact` 的时机；改完后对当前会话立即生效。
           </p>
         </div>
       </div>

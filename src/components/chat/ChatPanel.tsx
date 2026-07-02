@@ -321,6 +321,7 @@ function ContextMeter({ sessionMeta, tabId, sessionStatus }: {
 }) {
   const selectedModel = useSettingsStore((s) => s.selectedModel);
   const contextWindowMode = useSettingsStore((s) => s.contextWindowMode);
+  const autoCompactThresholdTokens = useSettingsStore((s) => s.autoCompactThresholdTokens);
   const [isCompacting, setIsCompacting] = useState(false);
   const modelForContext = sessionMeta.spawnedModel
     || sessionMeta.snapshotModel
@@ -328,7 +329,7 @@ function ContextMeter({ sessionMeta, tabId, sessionStatus }: {
     || resolveModelForProvider(selectedModel);
   const effectiveContextMode = sessionMeta.snapshotContextWindowMode ?? contextWindowMode;
   const contextWindow = getContextWindowForModel(modelForContext, effectiveContextMode);
-  const compactThreshold = getAutoCompactThreshold(modelForContext, effectiveContextMode);
+  const compactThreshold = getAutoCompactThreshold(modelForContext, effectiveContextMode, autoCompactThresholdTokens);
   const used = Math.min(contextWindow, Math.max(0,
     (sessionMeta.inputTokens ?? 0) + (sessionMeta.outputTokens ?? 0),
   ));
