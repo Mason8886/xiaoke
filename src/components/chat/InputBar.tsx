@@ -3,7 +3,7 @@ import { useChatStore, useActiveTab, getActiveTabState, generateMessageId } from
 import { useSettingsStore, MODEL_OPTIONS, mapSessionModeToPermissionMode, setSessionModeLocal, type ThinkingLevel } from '../../stores/settingsStore';
 import { bridge, onClaudeStream, onClaudeStderr, onSessionExit, onPermissionRequest, type UnifiedCommand, type PermissionRequest } from '../../lib/tauri-bridge';
 import { ModelSelector } from './ModelSelector';
-// import { ModeSelector } from './ModeSelector';
+import { ModeSelector } from './ModeSelector';
 import { FileUploadChips } from './FileUploadChips';
 import { RewindPanel } from './RewindPanel';
 import { useFileAttachments } from '../../hooks/useFileAttachments';
@@ -888,6 +888,18 @@ export function InputBar() {
           setSessionMeta(tabId, { stdinId: undefined, envFingerprint: undefined, providerSwitched: true, providerSwitchPendingText: text });
           stdinId = undefined;
         } else {
+          const currentMode = useSettingsStore.getState().sessionMode;
+          const spawnedMode = getActiveTabState().sessionMeta.snapshotMode;
+          if (spawnedMode && currentMode !== spawnedMode) {
+            console.warn(`[TOKENICODE] Permission mode changed (${spawnedMode} -> ${currentMode}), killing stale session`);
+            bridge.killSession(stdinId).catch(() => {});
+            if ((window as any).__claudeUnlisteners?.[stdinId]) {
+              (window as any).__claudeUnlisteners[stdinId]();
+              delete (window as any).__claudeUnlisteners[stdinId];
+            }
+            setSessionMeta(tabId, { stdinId: undefined, snapshotMode: undefined });
+            stdinId = undefined;
+          } else {
           // Check if model changed since this process was spawned.
           // If so, kill the stale process and fall through to spawn a new one with --resume.
           const currentModel = resolveModelForProvider(selectedModel);
@@ -938,6 +950,7 @@ export function InputBar() {
             stdinId = undefined;
           }
           }
+        }
         }
       }
 
@@ -1087,26 +1100,35 @@ export function InputBar() {
         // Read sessionMode from store (not closure) so plan-approve → code
         // mode switch is visible even when called via rAF.
         const liveSessionMode = useSettingsStore.getState().sessionMode;
-        const liveThinkingLevel = resolveThinkingLevelForProvider(
-          selectedModel,
-          useSettingsStore.getState().thinkingLevel,
-        );
-        console.log('[TOKENICODE:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: useProviderStore.getState().activeProviderId });
+        const liveThinkingSetting = useSettingsStore.getState().thinkingLevel;
+        const liveThinkingLevel = resolveThinkingLevelForProvider(selectedModel, liveThinkingSetting);
+        const liveProviderId = useProviderStore.getState().activeProviderId || null;
+        const liveResolvedModel = resolveModelForProvider(selectedModel);
+        console.log('[TOKENICODE:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: liveProviderId });
         const session = await bridge.startSession({
           prompt: text,
           cwd,
-          model: resolveModelForProvider(selectedModel),
+          model: liveResolvedModel,
           session_id: preGeneratedId,
           resume_session_id: existingSessionId || undefined,
           thinking_level: liveThinkingLevel,
           session_mode: (liveSessionMode === 'ask' || liveSessionMode === 'plan') ? liveSessionMode : undefined,
-          provider_id: useProviderStore.getState().activeProviderId || undefined,
+          provider_id: liveProviderId || undefined,
           permission_mode: mapSessionModeToPermissionMode(liveSessionMode),
         });
         console.log('[TOKENICODE:session] started successfully', { sessionId: session.session_id, pid: session.pid, cli: session.cli_path });
 
         // Store both: session_id for tracking, stdinId (preGeneratedId) for stdin communication
-        setSessionMeta(tabId, { sessionId: session.session_id, stdinId: preGeneratedId, envFingerprint: envFingerprint(), spawnedModel: resolveModelForProvider(selectedModel) });
+        setSessionMeta(tabId, {
+          sessionId: session.session_id,
+          stdinId: preGeneratedId,
+          envFingerprint: envFingerprint(),
+          snapshotMode: liveSessionMode,
+          snapshotModel: selectedModel,
+          snapshotThinking: liveThinkingSetting,
+          snapshotProviderId: liveProviderId,
+          spawnedModel: liveResolvedModel,
+        });
         // Note: stdinId → tabId mapping already registered before listener setup (TK-329)
 
         // Track the session and refresh conversation list
@@ -1550,8 +1572,7 @@ export function InputBar() {
             <span className="truncate">{workingDirectoryLabel}</span>
           </button>
 
-          {/* Mode selector — hidden, use /ask /plan /code /bypass slash commands */}
-          {/* <ModeSelector disabled={isRunning} /> */}
+          <ModeSelector />
 
           {/* Think toggle */}
           <ThinkLevelSelector disabled={isRunning} />

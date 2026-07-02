@@ -884,17 +884,21 @@ async function startDraftSession(folderPath: string) {
     };
 
     const selectedModel = useSettingsStore.getState().selectedModel;
+    const sessionMode = useSettingsStore.getState().sessionMode;
+    const thinkingSetting = useSettingsStore.getState().thinkingLevel;
+    const providerId = useProviderStore.getState().activeProviderId || null;
+    const resolvedModel = resolveModelForProvider(selectedModel);
     const session = await bridge.startSession({
       prompt: '',  // empty = pre-warm, no message sent
       cwd: folderPath,
-      model: resolveModelForProvider(selectedModel),
+      model: resolvedModel,
       session_id: preWarmId,
       thinking_level: resolveThinkingLevelForProvider(
         selectedModel,
-        useSettingsStore.getState().thinkingLevel,
+        thinkingSetting,
       ),
-      provider_id: useProviderStore.getState().activeProviderId || undefined,
-      permission_mode: mapSessionModeToPermissionMode(useSettingsStore.getState().sessionMode),
+      provider_id: providerId || undefined,
+      permission_mode: mapSessionModeToPermissionMode(sessionMode),
     });
 
     // Store stdinId so InputBar can send the first message via stdin
@@ -903,7 +907,11 @@ async function startDraftSession(folderPath: string) {
       sessionId: session.session_id,
       stdinId: preWarmId,
       envFingerprint: envFingerprint(),
-      spawnedModel: resolveModelForProvider(selectedModel),
+      snapshotMode: sessionMode,
+      snapshotModel: selectedModel,
+      snapshotThinking: thinkingSetting,
+      snapshotProviderId: providerId,
+      spawnedModel: resolvedModel,
     });
 
     // Register stdinId → tabId mapping for background stream routing

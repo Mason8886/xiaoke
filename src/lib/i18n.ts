@@ -221,10 +221,10 @@ const messages: Record<Locale, Record<string, string>> = {
     'cmd.settings': '设置',
 
     // ModeSelector
-    'mode.code': 'Code',
-    'mode.ask': 'Ask',
-    'mode.plan': 'Plan',
-    'mode.bypass': 'Bypass',
+    'mode.code': '标准自动',
+    'mode.ask': '询问',
+    'mode.plan': '计划',
+    'mode.bypass': '全自动',
 
     // Activity status
     'chat.thinking': '思考中...',
@@ -470,10 +470,10 @@ const messages: Record<Locale, Record<string, string>> = {
     'slash.desc.usage': '显示详细的 Token 用量明细',
 
     // Command feedback
-    'cmd.switchedToAsk': '已切换到 Ask 模式（仅回答问题，不修改代码）',
-    'cmd.switchedToPlan': '已切换到 Plan 模式（规划任务，不直接执行）',
-    'cmd.switchedToCode': '已切换到 Code 模式（默认模式）',
-    'cmd.switchedToBypass': '已切换到 Bypass 模式（跳过所有权限检查，需重启会话生效）',
+    'cmd.switchedToAsk': '已切换到询问模式（仅回答问题，不修改代码）',
+    'cmd.switchedToPlan': '已切换到计划模式（规划任务，不直接执行）',
+    'cmd.switchedToCode': '已切换到标准自动模式（自动接受编辑，敏感操作仍会确认）',
+    'cmd.switchedToBypass': '已切换到全自动模式（跳过权限检查，下一次发送会自动重启会话生效）',
     'cmd.compacting': '正在压缩上下文...',
     'cmd.noActiveSession': '没有活跃的会话。请先发送一条消息。',
     'cmd.costTitle': '会话费用',
@@ -931,10 +931,10 @@ const messages: Record<Locale, Record<string, string>> = {
     'cmd.settings': 'Settings',
 
     // ModeSelector
-    'mode.code': 'Code',
+    'mode.code': 'Auto',
     'mode.ask': 'Ask',
     'mode.plan': 'Plan',
-    'mode.bypass': 'Bypass',
+    'mode.bypass': 'Full Auto',
 
     // Activity status
     'chat.thinking': 'Thinking...',
@@ -1182,8 +1182,8 @@ const messages: Record<Locale, Record<string, string>> = {
     // Command feedback
     'cmd.switchedToAsk': 'Switched to Ask mode (answers only, no code changes)',
     'cmd.switchedToPlan': 'Switched to Plan mode (planning only, no execution)',
-    'cmd.switchedToCode': 'Switched to Code mode (default)',
-    'cmd.switchedToBypass': 'Switched to Bypass mode (skip all permission checks, requires session restart)',
+    'cmd.switchedToCode': 'Switched to Auto mode (accept edits, still asks for sensitive actions)',
+    'cmd.switchedToBypass': 'Switched to Full Auto mode (skips permission checks; next send restarts the session automatically)',
     'cmd.compacting': 'Compacting context...',
     'cmd.noActiveSession': 'No active session. Send a message first.',
     'cmd.costTitle': 'Session Cost',
