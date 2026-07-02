@@ -1,6 +1,12 @@
 import { useCallback, type MutableRefObject } from 'react';
 import { useChatStore, generateMessageId, type ChatMessage } from '../stores/chatStore';
-import { useSettingsStore, mapSessionModeToPermissionMode, getEffectiveMode } from '../stores/settingsStore';
+import {
+  useSettingsStore,
+  mapSessionModeToPermissionMode,
+  getEffectiveMode,
+  getContextWindowForModel,
+  getAutoCompactThreshold,
+} from '../stores/settingsStore';
 import { useSessionStore } from '../stores/sessionStore';
 import { useAgentStore, resolveAgentId, getAgentDepth } from '../stores/agentStore';
 import { useFileStore } from '../stores/fileStore';
@@ -1542,10 +1548,12 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
                 (window as any).__claudeUnlisteners[retryId] = () => { retryUnlisten(); retryUnlistenStderr(); };
                 (window as any).__claudeUnlisten = (window as any).__claudeUnlisteners[retryId];
 
+                const retryResolvedModel = resolveModelForProvider(selectedModel);
+                const retryContextWindowMode = useSettingsStore.getState().contextWindowMode;
                 const session = await bridge.startSession({
                   prompt: retryText,
                   cwd,
-                  model: resolveModelForProvider(selectedModel),
+                  model: retryResolvedModel,
                   session_id: retryId,
                   // No resume_session_id — fresh start to avoid thinking signature issue
                   thinking_level: resolveThinkingLevelForProvider(
@@ -1554,10 +1562,17 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
                   ),
                   session_mode: (sessionMode === 'ask' || sessionMode === 'plan') ? sessionMode : undefined,
                   provider_id: useProviderStore.getState().activeProviderId || undefined,
+                  context_window: getContextWindowForModel(retryResolvedModel, retryContextWindowMode),
                   permission_mode: mapSessionModeToPermissionMode(sessionMode),
                 });
 
-                setSessionMeta({ sessionId: session.session_id, stdinId: retryId, envFingerprint: envFingerprint(), spawnedModel: resolveModelForProvider(selectedModel) });
+                setSessionMeta({
+                  sessionId: session.session_id,
+                  stdinId: retryId,
+                  envFingerprint: envFingerprint(),
+                  snapshotContextWindowMode: retryContextWindowMode,
+                  spawnedModel: retryResolvedModel,
+                });
                 const tabId = useSessionStore.getState().selectedSessionId;
                 if (tabId) useSessionStore.getState().registerStdinTab(retryId, tabId);
                 bridge.trackSession(session.session_id).catch(() => {});
@@ -1739,14 +1754,18 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
           }
         }
 
-        // --- Auto-compact: when input tokens exceed 160K (80% of 200K context),
-        // automatically send /compact to prevent context overflow on the next turn.
+        // --- Auto-compact: threshold follows the declared context window.
+        // Default 200K models compact at 160K; declared 1M models compact at 800K.
         // Fires at most once per session to avoid infinite loops.
         const resultInputTokens = msg.usage?.input_tokens || 0;
-        const compactStdinId = useChatStore.getState().getTab(tabId)?.sessionMeta.stdinId;
-        if (resultInputTokens > 160_000 && !autoCompactFiredRef.current && compactStdinId && msg.subtype === 'success') {
+        const compactMeta = useChatStore.getState().getTab(tabId)?.sessionMeta;
+        const compactStdinId = compactMeta?.stdinId;
+        const compactModel = compactMeta?.spawnedModel || compactMeta?.snapshotModel || useSettingsStore.getState().selectedModel;
+        const compactMode = compactMeta?.snapshotContextWindowMode ?? useSettingsStore.getState().contextWindowMode;
+        const autoCompactThreshold = getAutoCompactThreshold(compactModel, compactMode);
+        if (resultInputTokens > autoCompactThreshold && !autoCompactFiredRef.current && compactStdinId && msg.subtype === 'success') {
           autoCompactFiredRef.current = true;
-          console.log('[TOKENICODE] Auto-compact triggered: inputTokens =', resultInputTokens);
+          console.log('[TOKENICODE] Auto-compact triggered:', { inputTokens: resultInputTokens, threshold: autoCompactThreshold });
           const compactMsgId = generateMessageId();
           addMessage({
             id: compactMsgId,

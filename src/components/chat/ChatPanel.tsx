@@ -6,7 +6,13 @@ import { ToolGroup } from './ToolGroup';
 import { InputBar } from './InputBar';
 import { ExportMenu } from '../conversations/ExportMenu';
 import { UpdateButton } from '../shared/UpdateButton';
-import { useSettingsStore, MODEL_OPTIONS, mapSessionModeToPermissionMode } from '../../stores/settingsStore';
+import {
+  useSettingsStore,
+  MODEL_OPTIONS,
+  mapSessionModeToPermissionMode,
+  getContextWindowForModel,
+  getAutoCompactThreshold,
+} from '../../stores/settingsStore';
 import { useSessionStore } from '../../stores/sessionStore';
 import { useFileStore } from '../../stores/fileStore';
 import { useAgentStore } from '../../stores/agentStore';
@@ -226,7 +232,15 @@ function CyclingThinkingText() {
 /** Activity indicator with elapsed time and token count */
 function ActivityIndicator({ activityStatus, sessionMeta }: {
   activityStatus: { phase: string; toolName?: string };
-  sessionMeta: { turnStartTime?: number; outputTokens?: number; inputTokens?: number; lastProgressAt?: number };
+  sessionMeta: {
+    turnStartTime?: number;
+    outputTokens?: number;
+    inputTokens?: number;
+    lastProgressAt?: number;
+    spawnedModel?: string;
+    snapshotModel?: string;
+    snapshotContextWindowMode?: import('../../stores/settingsStore').ContextWindowMode;
+  };
 }) {
   const t = useT();
   const [now, setNow] = useState(Date.now());
@@ -251,9 +265,14 @@ function ActivityIndicator({ activityStatus, sessionMeta }: {
   // Context pressure warning: threshold depends on model context window size
   // 1M models (claude-opus-4-6-1m, mimo-v2-pro[1m]) → warn at 600K; others at 120K (60% of 200K)
   const selectedModel = useSettingsStore((s) => s.selectedModel);
-  const resolvedModel = resolveModelForProvider(selectedModel);
-  const is1MModel = resolvedModel.includes('[1m]') || selectedModel === 'claude-opus-4-6-1m';
-  const contextWindow = is1MModel ? 1_000_000 : 200_000;
+  const contextWindowMode = useSettingsStore((s) => s.contextWindowMode);
+  const resolvedModel = sessionMeta.spawnedModel
+    || sessionMeta.snapshotModel
+    || resolveModelForProvider(selectedModel);
+  const contextWindow = getContextWindowForModel(
+    resolvedModel,
+    sessionMeta.snapshotContextWindowMode ?? contextWindowMode,
+  );
   const inputTokens = sessionMeta.inputTokens || 0;
   const contextWarning = inputTokens > contextWindow * 0.6;
 
@@ -295,28 +314,21 @@ function ActivityIndicator({ activityStatus, sessionMeta }: {
   );
 }
 
-function contextWindowForModel(model: string): number {
-  const lower = model.toLowerCase();
-  return lower.includes('1m') || lower.includes('[1m]') ? 1_000_000 : 200_000;
-}
-
-function compactThresholdForModel(model: string): number {
-  return contextWindowForModel(model) >= 1_000_000 ? 800_000 : 160_000;
-}
-
 function ContextMeter({ sessionMeta, tabId, sessionStatus }: {
   sessionMeta: SessionMeta;
   tabId: string | null;
   sessionStatus?: string;
 }) {
   const selectedModel = useSettingsStore((s) => s.selectedModel);
+  const contextWindowMode = useSettingsStore((s) => s.contextWindowMode);
   const [isCompacting, setIsCompacting] = useState(false);
   const modelForContext = sessionMeta.spawnedModel
     || sessionMeta.snapshotModel
     || sessionMeta.model
     || resolveModelForProvider(selectedModel);
-  const contextWindow = contextWindowForModel(modelForContext);
-  const compactThreshold = compactThresholdForModel(modelForContext);
+  const effectiveContextMode = sessionMeta.snapshotContextWindowMode ?? contextWindowMode;
+  const contextWindow = getContextWindowForModel(modelForContext, effectiveContextMode);
+  const compactThreshold = getAutoCompactThreshold(modelForContext, effectiveContextMode);
   const used = Math.min(contextWindow, Math.max(0,
     (sessionMeta.inputTokens ?? 0) + (sessionMeta.outputTokens ?? 0),
   ));
@@ -1013,6 +1025,7 @@ async function startDraftSession(folderPath: string) {
     const selectedModel = useSettingsStore.getState().selectedModel;
     const sessionMode = useSettingsStore.getState().sessionMode;
     const thinkingSetting = useSettingsStore.getState().thinkingLevel;
+    const contextWindowMode = useSettingsStore.getState().contextWindowMode;
     const providerId = useProviderStore.getState().activeProviderId || null;
     const resolvedModel = resolveModelForProvider(selectedModel);
     const session = await bridge.startSession({
@@ -1025,6 +1038,7 @@ async function startDraftSession(folderPath: string) {
         thinkingSetting,
       ),
       provider_id: providerId || undefined,
+      context_window: getContextWindowForModel(resolvedModel, contextWindowMode),
       permission_mode: mapSessionModeToPermissionMode(sessionMode),
     });
 
@@ -1037,6 +1051,7 @@ async function startDraftSession(folderPath: string) {
       snapshotMode: sessionMode,
       snapshotModel: selectedModel,
       snapshotThinking: thinkingSetting,
+      snapshotContextWindowMode: contextWindowMode,
       snapshotProviderId: providerId,
       spawnedModel: resolvedModel,
     });

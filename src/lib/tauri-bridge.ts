@@ -19,6 +19,8 @@ export interface StartSessionParams {
   session_mode?: string;
   /** Active provider ID from providers.json */
   provider_id?: string;
+  /** Declared model context window, e.g. 1000000 for compatible DeepSeek/CC Switch routes. */
+  context_window?: number;
   /** Permission mode for CLI control protocol.
    *  "acceptEdits" | "default" | "plan" | "bypassPermissions"
    *  When not "bypassPermissions", enables structured permission requests via SDK protocol. */

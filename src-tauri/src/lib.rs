@@ -1247,21 +1247,24 @@ async fn start_claude_session(
         "1".to_string(),
     );
 
-    // For models with 1M context window (MiMo v2 Pro etc.), override the auto-compact
-    // threshold so Claude Code doesn't compact prematurely. The CLI's internal model map
-    // may only know ~200K for these models; this env var directly sets the compact window.
-    if let Some(model_name) = params.model.as_deref() {
-        let m = model_name.to_lowercase();
-        if m.contains("mimo") || m.contains("[1m]") {
-            resolved_env.insert(
-                "CLAUDE_CODE_AUTO_COMPACT_WINDOW".to_string(),
-                "1000000".to_string(),
-            );
-            eprintln!(
-                "[TOKENICODE] Set CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000 for model {}",
-                model_name
-            );
-        }
+    // For long-context third-party routes, override Claude Code's internal compact window.
+    // Some provider model names do not expose a 1M marker, so the frontend can declare it.
+    let declared_context_window = params.context_window.unwrap_or_else(|| {
+        params.model.as_deref().map(|model_name| {
+            let m = model_name.to_lowercase();
+            if m.contains("mimo") || m.contains("[1m]") { 1_000_000 } else { 200_000 }
+        }).unwrap_or(200_000)
+    });
+    if declared_context_window >= 1_000_000 {
+        resolved_env.insert(
+            "CLAUDE_CODE_AUTO_COMPACT_WINDOW".to_string(),
+            declared_context_window.to_string(),
+        );
+        eprintln!(
+            "[TOKENICODE] Set CLAUDE_CODE_AUTO_COMPACT_WINDOW={} for model {:?}",
+            declared_context_window,
+            params.model
+        );
     }
 
     // On Windows, disable MSYS2/Git Bash automatic path conversion.

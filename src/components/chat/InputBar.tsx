@@ -1,6 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useChatStore, useActiveTab, getActiveTabState, generateMessageId } from '../../stores/chatStore';
-import { useSettingsStore, MODEL_OPTIONS, mapSessionModeToPermissionMode, setSessionModeLocal, type ThinkingLevel } from '../../stores/settingsStore';
+import {
+  useSettingsStore,
+  MODEL_OPTIONS,
+  mapSessionModeToPermissionMode,
+  setSessionModeLocal,
+  getContextWindowForModel,
+  type ThinkingLevel,
+} from '../../stores/settingsStore';
 import { bridge, onClaudeStream, onClaudeStderr, onSessionExit, onPermissionRequest, type UnifiedCommand, type PermissionRequest } from '../../lib/tauri-bridge';
 import { ModelSelector } from './ModelSelector';
 import { ModeSelector } from './ModeSelector';
@@ -900,6 +907,18 @@ export function InputBar() {
             setSessionMeta(tabId, { stdinId: undefined, snapshotMode: undefined });
             stdinId = undefined;
           } else {
+          const currentContextMode = useSettingsStore.getState().contextWindowMode;
+          const spawnedContextMode = getActiveTabState().sessionMeta.snapshotContextWindowMode ?? 'default';
+          if (currentContextMode !== spawnedContextMode) {
+            console.warn(`[TOKENICODE] Context window mode changed (${spawnedContextMode} -> ${currentContextMode}), killing stale session`);
+            bridge.killSession(stdinId).catch(() => {});
+            if ((window as any).__claudeUnlisteners?.[stdinId]) {
+              (window as any).__claudeUnlisteners[stdinId]();
+              delete (window as any).__claudeUnlisteners[stdinId];
+            }
+            setSessionMeta(tabId, { stdinId: undefined, snapshotContextWindowMode: undefined });
+            stdinId = undefined;
+          } else {
           // Check if model changed since this process was spawned.
           // If so, kill the stale process and fall through to spawn a new one with --resume.
           const currentModel = resolveModelForProvider(selectedModel);
@@ -952,6 +971,7 @@ export function InputBar() {
           }
         }
         }
+      }
       }
 
       if (!sentViaStdin) {
@@ -1101,9 +1121,11 @@ export function InputBar() {
         // mode switch is visible even when called via rAF.
         const liveSessionMode = useSettingsStore.getState().sessionMode;
         const liveThinkingSetting = useSettingsStore.getState().thinkingLevel;
+        const liveContextWindowMode = useSettingsStore.getState().contextWindowMode;
         const liveThinkingLevel = resolveThinkingLevelForProvider(selectedModel, liveThinkingSetting);
         const liveProviderId = useProviderStore.getState().activeProviderId || null;
         const liveResolvedModel = resolveModelForProvider(selectedModel);
+        const liveContextWindow = getContextWindowForModel(liveResolvedModel, liveContextWindowMode);
         console.log('[TOKENICODE:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: liveProviderId });
         const session = await bridge.startSession({
           prompt: text,
@@ -1114,6 +1136,7 @@ export function InputBar() {
           thinking_level: liveThinkingLevel,
           session_mode: (liveSessionMode === 'ask' || liveSessionMode === 'plan') ? liveSessionMode : undefined,
           provider_id: liveProviderId || undefined,
+          context_window: liveContextWindow,
           permission_mode: mapSessionModeToPermissionMode(liveSessionMode),
         });
         console.log('[TOKENICODE:session] started successfully', { sessionId: session.session_id, pid: session.pid, cli: session.cli_path });
@@ -1126,6 +1149,7 @@ export function InputBar() {
           snapshotMode: liveSessionMode,
           snapshotModel: selectedModel,
           snapshotThinking: liveThinkingSetting,
+          snapshotContextWindowMode: liveContextWindowMode,
           snapshotProviderId: liveProviderId,
           spawnedModel: liveResolvedModel,
         });

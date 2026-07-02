@@ -31,6 +31,7 @@ export function mapSessionModeToPermissionMode(mode: SessionMode): CliPermission
   }
 }
 export type ThinkingLevel = 'off' | 'low' | 'medium' | 'high' | 'max';
+export type ContextWindowMode = 'default' | 'large1m';
 
 // --- Model options (display mapping) ---
 
@@ -76,6 +77,8 @@ interface SettingsState {
   setupCompleted: boolean;
   /** Thinking effort level: off disables, low/medium/high/max set effort */
   thinkingLevel: ThinkingLevel;
+  /** Declares that the selected/provider model supports a 1M context window. */
+  contextWindowMode: ContextWindowMode;
   /** Whether a newer version is available (set by auto-check on startup) */
   updateAvailable: boolean;
   /** Whether a newer CLI version is available */
@@ -123,6 +126,7 @@ interface SettingsState {
   setSidebarWidth: (width: number) => void;
   setSetupCompleted: (completed: boolean) => void;
   setThinkingLevel: (level: ThinkingLevel) => void;
+  setContextWindowMode: (mode: ContextWindowMode) => void;
   setUpdateAvailable: (available: boolean, version?: string) => void;
   setUpdateDownloaded: (downloaded: boolean) => void;
   setLastSeenVersion: (version: string) => void;
@@ -165,6 +169,7 @@ export const useSettingsStore = create<SettingsState>()(
       sidebarWidth: 280,
       setupCompleted: false,
       thinkingLevel: 'medium' as ThinkingLevel,
+      contextWindowMode: 'default',
       updateAvailable: false,
       updateVersion: '',
       cliUpdateAvailable: false,
@@ -251,6 +256,9 @@ export const useSettingsStore = create<SettingsState>()(
       setThinkingLevel: (level) =>
         set(() => ({ thinkingLevel: level })),
 
+      setContextWindowMode: (contextWindowMode) =>
+        set(() => ({ contextWindowMode })),
+
       setUpdateAvailable: (available, version) =>
         set(() => ({
           updateAvailable: available,
@@ -277,7 +285,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'tokenicode-settings',
-      version: 9,
+      version: 10,
       migrate: (persistedState: unknown, version: number) => {
         const persisted = persistedState as Record<string, unknown>;
         if (version === 0) {
@@ -332,6 +340,9 @@ export const useSettingsStore = create<SettingsState>()(
         if (version < 9) {
           persisted.monoFontFollowsInterface = true;
         }
+        if (version < 10) {
+          persisted.contextWindowMode = 'default';
+        }
         return persisted;
       },
       partialize: (state) => ({
@@ -350,6 +361,7 @@ export const useSettingsStore = create<SettingsState>()(
         sidebarWidth: state.sidebarWidth,
         setupCompleted: state.setupCompleted,
         thinkingLevel: state.thinkingLevel,
+        contextWindowMode: state.contextWindowMode,
         updateAvailable: state.updateAvailable,
         updateVersion: state.updateVersion,
         lastSeenVersion: state.lastSeenVersion,
@@ -379,6 +391,20 @@ export function getEffectiveModel(meta: { snapshotModel?: string } | undefined):
 /** Get the effective thinking level for a given session's meta snapshot */
 export function getEffectiveThinking(meta: { snapshotThinking?: ThinkingLevel } | undefined): ThinkingLevel {
   return meta?.snapshotThinking ?? useSettingsStore.getState().thinkingLevel;
+}
+
+export function isLargeContextMode(model?: string, mode?: ContextWindowMode): boolean {
+  if (mode === 'large1m') return true;
+  const lower = (model || '').toLowerCase();
+  return lower.includes('1m') || lower.includes('[1m]');
+}
+
+export function getContextWindowForModel(model?: string, mode?: ContextWindowMode): number {
+  return isLargeContextMode(model, mode) ? 1_000_000 : 200_000;
+}
+
+export function getAutoCompactThreshold(model?: string, mode?: ContextWindowMode): number {
+  return getContextWindowForModel(model, mode) >= 1_000_000 ? 800_000 : 160_000;
 }
 
 // --- Runtime mode switching via SDK control protocol ---

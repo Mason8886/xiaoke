@@ -159,6 +159,8 @@ pub struct StartSessionParams {
     /// Active provider ID from providers.json.
     /// When set, the provider's env vars are injected into the CLI process.
     pub provider_id: Option<String>,
+    /// Declared model context window. Used to override Claude Code auto-compact window.
+    pub context_window: Option<u32>,
     /// Permission mode for CLI. Maps from frontend session modes:
     ///   "acceptEdits" (code mode) | "default" (ask mode) | "plan" | "bypassPermissions" (bypass)
     /// When not "bypassPermissions", enables --permission-prompt-tool stdio for structured

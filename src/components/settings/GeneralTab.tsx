@@ -1,5 +1,14 @@
 import { useRef, useCallback, useState } from 'react';
-import { useSettingsStore, MODEL_OPTIONS, ColorTheme, BackgroundTheme, FontFamily } from '../../stores/settingsStore';
+import {
+  useSettingsStore,
+  MODEL_OPTIONS,
+  ColorTheme,
+  BackgroundTheme,
+  FontFamily,
+  ContextWindowMode,
+  getContextWindowForModel,
+  getAutoCompactThreshold,
+} from '../../stores/settingsStore';
 import { useProviderStore } from '../../stores/providerStore';
 import { useT } from '../../lib/i18n';
 import { displayProviderModelName } from '../../lib/deepseek-models';
@@ -94,6 +103,11 @@ const FONT_FAMILY_OPTIONS: { id: FontFamily; label: string; sample: string }[] =
   { id: 'mono', label: '等宽字体', sample: '中文 Aa 123' },
 ];
 
+const CONTEXT_WINDOW_OPTIONS: { id: ContextWindowMode; label: string; hint: string }[] = [
+  { id: 'default', label: '标准 200K', hint: '自动 compact 阈值 160K' },
+  { id: 'large1m', label: '声明 1M', hint: '自动 compact 阈值 800K' },
+];
+
 /* Mini app preview — simplified chat interface thumbnail */
 function ThemePreview({ color }: { color: string }) {
   return (
@@ -133,6 +147,7 @@ export function GeneralTab() {
   const backgroundTheme = useSettingsStore((s) => s.backgroundTheme);
   const locale = useSettingsStore((s) => s.locale);
   const selectedModel = useSettingsStore((s) => s.selectedModel);
+  const contextWindowMode = useSettingsStore((s) => s.contextWindowMode);
   const fontSize = useSettingsStore((s) => s.fontSize);
   const fontFamily = useSettingsStore((s) => s.fontFamily);
   const monoFontFollowsInterface = useSettingsStore((s) => s.monoFontFollowsInterface);
@@ -141,6 +156,7 @@ export function GeneralTab() {
   const setBackgroundTheme = useSettingsStore((s) => s.setBackgroundTheme);
   const setLocale = useSettingsStore((s) => s.setLocale);
   const setSelectedModel = useSettingsStore((s) => s.setSelectedModel);
+  const setContextWindowMode = useSettingsStore((s) => s.setContextWindowMode);
   const setFontSize = useSettingsStore((s) => s.setFontSize);
   const setFontFamily = useSettingsStore((s) => s.setFontFamily);
   const setMonoFontFollowsInterface = useSettingsStore((s) => s.setMonoFontFollowsInterface);
@@ -159,6 +175,8 @@ export function GeneralTab() {
     ? activeProvider?.modelMappings.find((m) => m.tier === selectedTier)
     : undefined;
   const actualModel = selectedMapping?.providerModel || selectedModel;
+  const contextWindow = getContextWindowForModel(actualModel, contextWindowMode);
+  const compactThreshold = getAutoCompactThreshold(actualModel, contextWindowMode);
   const tierMappings = activeProvider?.modelMappings
     .filter((m) => ['opus', 'sonnet', 'haiku'].includes(m.tier) && m.providerModel)
     .map((m) => `${m.tier}=${displayProviderModelName(m.providerModel)}`)
@@ -450,6 +468,31 @@ export function GeneralTab() {
               <span className="ml-2">Mappings: {tierMappings}</span>
             )}
           </div>
+        </div>
+
+        {/* Context Window */}
+        <div>
+          <h3 className="text-[13px] font-medium text-text-primary mb-2">上下文窗口</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {CONTEXT_WINDOW_OPTIONS.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setContextWindowMode(option.id)}
+                className={`text-left px-3 py-2 rounded-lg border transition-smooth
+                  ${contextWindowMode === option.id
+                    ? 'bg-accent/10 text-accent border-accent/30'
+                    : 'text-text-muted hover:bg-bg-secondary border-border-subtle'
+                  }`}
+              >
+                <div className="text-[13px] font-medium">{option.label}</div>
+                <div className="mt-0.5 text-[11px] text-text-tertiary">{option.hint}</div>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-text-tertiary leading-relaxed">
+            当前声明：{contextWindow.toLocaleString()} tokens；自动 compact 阈值：{compactThreshold.toLocaleString()} tokens。
+            如果你的 CC Switch / DeepSeek 路由实际支持 1M，请选择“声明 1M”。
+          </p>
         </div>
       </div>
     </div>
