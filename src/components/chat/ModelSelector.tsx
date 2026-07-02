@@ -83,7 +83,16 @@ export function ModelSelector({ disabled = false }: { disabled?: boolean }) {
     return [...official, ...extras];
   }, [activeProvider]);
 
-  const current = displayOptions.find((m) => m.id === selectedModel) || displayOptions[0];
+  const fallbackOption = displayOptions.find((option) => option.mapped) || displayOptions[0];
+
+  useEffect(() => {
+    if (!fallbackOption) return;
+    if (!displayOptions.some((option) => option.id === selectedModel)) {
+      setSelectedModel(fallbackOption.id);
+    }
+  }, [displayOptions, fallbackOption, selectedModel, setSelectedModel]);
+
+  const current = displayOptions.find((m) => m.id === selectedModel) || fallbackOption;
 
   return (
     <div ref={ref} className="relative">

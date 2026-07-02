@@ -7,6 +7,13 @@ import {
   normalizeProviderModelName,
 } from './deepseek-models';
 
+const TIER_MAP: Record<string, 'opus' | 'sonnet' | 'haiku'> = {
+  'claude-opus-4-6': 'opus',
+  'claude-opus-4-6-1m': 'opus',
+  'claude-sonnet-4-6': 'sonnet',
+  'claude-haiku-4-5-20251001': 'haiku',
+};
+
 /**
  * Result of model resolution — either a mapped model name or an error.
  */
@@ -37,14 +44,22 @@ export function resolveModelOrError(selectedModel: string): ModelResolution {
   }
 
   // 2. Fall back to tier mapping
-  const tierMap: Record<string, 'opus' | 'sonnet' | 'haiku'> = {
-    'claude-opus-4-6': 'opus',
-    'claude-opus-4-6-1m': 'opus',
-    'claude-sonnet-4-6': 'sonnet',
-    'claude-haiku-4-5-20251001': 'haiku',
-  };
-  const tier = tierMap[selectedModel];
-  if (!tier) return { ok: true, model: normalizeDeepSeekModelName(selectedModel) };
+  const tier = TIER_MAP[selectedModel];
+  if (!tier) {
+    const fallback = provider.modelMappings.find(
+      (m) => m.tier === 'sonnet' && m.providerModel,
+    ) || provider.modelMappings.find(
+      (m) => m.tier === 'haiku' && m.providerModel,
+    ) || provider.modelMappings.find(
+      (m) => m.tier === 'opus' && m.providerModel,
+    ) || provider.modelMappings.find((m) => m.providerModel);
+
+    if (fallback?.providerModel) {
+      return { ok: true, model: normalizeProviderModelName(fallback.providerModel) };
+    }
+
+    return { ok: false, reason: 'no_mapping', tier: selectedModel, providerName: provider.name };
+  }
 
   const mapping = provider.modelMappings.find(
     (m) => m.tier === tier && m.providerModel,
