@@ -712,6 +712,25 @@ const messages: Record<Locale, Record<string, string>> = {
     'setup.nativeInstall': '正在安装到系统...',
     'setup.npmFallback': '正在通过备用方式安装...',
 
+    // Dashboard
+    'dashboard.title': '小克工作台',
+    'dashboard.card1': '一键创建 AI 项目需求文档',
+    'dashboard.desc1': '快速生成结构化的项目需求文档，支持多种项目类型和模板',
+    'dashboard.card2': '一键生成前端/后端开发计划',
+    'dashboard.desc2': '自动分析需求并生成详细的前端或后端开发计划与任务分解',
+    'dashboard.card3': '自动生成 Claude Code / Codex 修改指令',
+    'dashboard.desc3': '根据需求或问题自动生成精准的 Claude Code 或 Codex 修改指令',
+    'dashboard.card4': 'Skill 管理器中文化',
+    'dashboard.desc4': '管理和编辑技能的中文界面，方便创建和组织自定义技能',
+    'dashboard.card5': 'API Provider 可视化管理',
+    'dashboard.desc5': '可视化管理多个 API 提供商配置，支持 Anthropic 和 OpenAI 兼容格式',
+    'dashboard.card6': 'MCP 管理器',
+    'dashboard.desc6': '集中管理 MCP 服务器连接，配置工具和资源',
+    'dashboard.card7': 'GitHub 项目助手',
+    'dashboard.desc7': '与 GitHub 仓库交互，管理 issues、PRs 和代码审查',
+    'dashboard.hint': '点击卡片开始使用对应功能（功能陆续开放中）',
+    'panel.dashboard': '工作台',
+
     // Permission dialog
     'perm.title': '需要文件访问权限',
     'perm.desc': `${APP_NAME} 需要「完整磁盘访问」权限才能正常读写项目文件。请在系统设置中授权，否则部分功能可能受限。`,
@@ -1423,6 +1442,25 @@ const messages: Record<Locale, Record<string, string>> = {
     'setup.nativeVerify': 'Verifying file integrity...',
     'setup.nativeInstall': 'Installing to system...',
     'setup.npmFallback': 'Installing via fallback method...',
+
+    // Dashboard
+    'dashboard.title': 'XiaoKe Dashboard',
+    'dashboard.card1': 'One-Click AI Project Requirements Doc',
+    'dashboard.desc1': 'Quickly generate structured project requirements documents with multiple templates',
+    'dashboard.card2': 'One-Click Dev Plan Generator',
+    'dashboard.desc2': 'Auto-analyze requirements and generate detailed frontend/backend development plans',
+    'dashboard.card3': 'Auto-Generate Claude Code / Codex Instructions',
+    'dashboard.desc3': 'Generate precise Claude Code or Codex modification instructions from requirements',
+    'dashboard.card4': 'Skill Manager (Chinese UI)',
+    'dashboard.desc4': 'Manage and edit skills with a Chinese interface for creating custom skills',
+    'dashboard.card5': 'API Provider Visual Management',
+    'dashboard.desc5': 'Visually manage multiple API provider configs with Anthropic & OpenAI-compatible formats',
+    'dashboard.card6': 'MCP Manager',
+    'dashboard.desc6': 'Centrally manage MCP server connections, tools and resources',
+    'dashboard.card7': 'GitHub Project Assistant',
+    'dashboard.desc7': 'Interact with GitHub repos, manage issues, PRs and code reviews',
+    'dashboard.hint': 'Click a card to get started (features rolling out gradually)',
+    'panel.dashboard': 'Dashboard',
 
     // Permission dialog
     'perm.title': 'File Access Required',
