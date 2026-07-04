@@ -87,7 +87,7 @@ impl ProcessManager {
             let mut managed = proc.lock().await;
             if let Err(e) = managed.child.kill().await {
                 eprintln!(
-                    "[TOKENICODE] Failed to kill process for session {}: {}",
+                    "[XiaoKe] Failed to kill process for session {}: {}",
                     id, e
                 );
             }

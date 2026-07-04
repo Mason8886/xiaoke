@@ -1,13 +1,13 @@
 [package]
-name = "tokenicode"
+name = "xiaoke"
 version = "0.10.12"
-description = "TOKENICODE DeepSeek Alpha - a DeepSeek/CC Switch focused TOKENICODE fork"
-authors = ["TinyZ"]
+description = "小克 (XiaoKe) - a Claude Code desktop GUI"
+authors = ["XiaoKe"]
 license = "Apache-2.0"
 edition = "2021"
 
 [lib]
-name = "tokenicode_lib"
+name = "xiaoke_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

@@ -148,7 +148,7 @@ function App() {
       const { stdinToTab } = useSessionStore.getState();
       const orphaned = activeIds.filter((id) => !stdinToTab[id]);
       for (const id of orphaned) {
-        console.log('[TOKENICODE:cleanup] killing orphaned process:', id);
+        console.log('[XiaoKe:cleanup] killing orphaned process:', id);
         bridge.killSession(id).catch(() => {});
       }
     }).catch(() => {});
@@ -160,7 +160,7 @@ function App() {
     const isMac = navigator.userAgent.includes('Mac');
     if (!isMac) return;
     // Skip if user previously dismissed the dialog
-    if (localStorage.getItem('tokenicode-perm-dismissed')) return;
+    if (localStorage.getItem('xiaoke-perm-dismissed')) return;
     bridge.checkFileAccess('/Users').then((ok) => {
       if (!ok) setShowPermDialog(true);
     }).catch(() => {});
@@ -260,7 +260,7 @@ function App() {
   // Apply font family to document root
   useEffect(() => {
     const stack = FONT_FAMILY_STACKS[fontFamily] || FONT_FAMILY_STACKS.microsoft;
-    document.documentElement.style.setProperty('--tokenicode-font-family', stack);
+    document.documentElement.style.setProperty('--xiaoke-font-family', stack);
   }, [fontFamily]);
 
   useEffect(() => {
@@ -434,7 +434,7 @@ function App() {
             <div className="px-6 py-4 flex items-center justify-end gap-2">
               <button
                 onClick={() => {
-                  localStorage.setItem('tokenicode-perm-dismissed', '1');
+                  localStorage.setItem('xiaoke-perm-dismissed', '1');
                   setShowPermDialog(false);
                 }}
                 className="px-4 py-2 rounded-lg text-xs font-medium
@@ -445,7 +445,7 @@ function App() {
               </button>
               <button
                 onClick={() => {
-                  localStorage.setItem('tokenicode-perm-dismissed', '1');
+                  localStorage.setItem('xiaoke-perm-dismissed', '1');
                   openUrl('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles');
                   setShowPermDialog(false);
                 }}

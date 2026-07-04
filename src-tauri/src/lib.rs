@@ -113,7 +113,7 @@ fn normalize_preview_url(input: &str) -> Result<String, String> {
 }
 
 fn emit_preview_command(app: &AppHandle, command: PreviewCommand) -> Result<(), String> {
-    app.emit("tokenicode-preview-command", command)
+    app.emit("xiaoke-preview-command", command)
         .map_err(|e| e.to_string())
 }
 
@@ -144,9 +144,9 @@ async fn preview_forward(app: AppHandle) -> Result<(), String> {
     emit_preview_command(&app, PreviewCommand::Forward)
 }
 
-/// Shared app data directory name — all editions (TOKENICODE / TCAlpha) use the same
+/// Shared app data directory name — all editions (XiaoKe / XiaoKe Alpha) use the same
 /// directory so they share a single CLI installation and settings.
-const APP_DATA_DIR_NAME: &str = "com.tinyzhuang.tokenicode";
+const APP_DATA_DIR_NAME: &str = "app.xiaoke.desktop";
 
 /// GCS bucket for Claude Code releases.
 const CLI_GCS_BASE: &str = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases";
@@ -185,7 +185,7 @@ fn get_local_git_bash() -> Option<String> {
 /// Returns the path to bash.exe if found.
 #[cfg(target_os = "windows")]
 pub(crate) fn find_git_bash() -> Option<String> {
-    // 1. Check app-local PortableGit first (auto-installed by TOKENICODE)
+    // 1. Check app-local PortableGit first (auto-installed by XiaoKe)
     if let Some(local) = get_local_git_bash() {
         return Some(local);
     }
@@ -368,7 +368,7 @@ fn system_proxy_url() -> Option<String> {
 
 /// Probe common local proxy ports and return the first reachable one.
 /// Re-probes every call (fast: ~100ms worst case) so proxy tools started after
-/// TOKENICODE are still detected. Covers Clash, Surge, common SOCKS.
+/// XiaoKe are still detected. Covers Clash, Surge, common SOCKS.
 fn probe_local_proxy() -> Option<String> {
     let ports: &[(u16, &str)] = &[
         (7890, "http"),   // Clash default
@@ -755,7 +755,7 @@ pub(crate) fn build_enriched_path() -> String {
 
 // --- Credential storage (TK-303) ---
 
-/// Directory for TOKENICODE app data (may be wiped by NSIS installer on Windows)
+/// Directory for XiaoKe app data (may be wiped by NSIS installer on Windows)
 fn app_data_dir() -> Result<std::path::PathBuf, String> {
     dirs::data_local_dir()
         .map(|d| d.join(APP_DATA_DIR_NAME))
@@ -763,10 +763,10 @@ fn app_data_dir() -> Result<std::path::PathBuf, String> {
 }
 
 /// Safe directory in user's home — survives Windows NSIS updates.
-/// Uses ~/.tokenicode/ which already stores tracked_sessions.txt.
+/// Uses ~/.xiaoke/ which already stores tracked_sessions.txt.
 fn safe_data_dir() -> Result<std::path::PathBuf, String> {
     dirs::home_dir()
-        .map(|d| d.join(".tokenicode"))
+        .map(|d| d.join(".xiaoke"))
         .ok_or_else(|| "Cannot determine home directory".to_string())
 }
 
@@ -1263,7 +1263,7 @@ async fn start_claude_session(
             declared_context_window.to_string(),
         );
         eprintln!(
-            "[TOKENICODE] Set CLAUDE_CODE_AUTO_COMPACT_WINDOW={} for model {:?}",
+            "[XiaoKe] Set CLAUDE_CODE_AUTO_COMPACT_WINDOW={} for model {:?}",
             declared_context_window,
             params.model
         );
@@ -1407,7 +1407,7 @@ async fn start_claude_session(
                 .current_dir(&params.cwd)
                 .env("PATH", &enriched_path)
                 // Clear CLAUDECODE env var so the CLI doesn't refuse to start
-                // when TOKENICODE itself is launched from within a Claude Code session.
+                // when XiaoKe itself is launched from within a Claude Code session.
                 .env_remove("CLAUDECODE");
             // Clear inherited ANTHROPIC_* env vars that conflict with our overrides
             for key in &inherited_keys_to_remove {
@@ -1497,13 +1497,13 @@ async fn start_claude_session(
 
     let pid = child.id().unwrap_or(0);
     eprintln!(
-        "[TOKENICODE] CLI spawned: pid={}, bin={}, permission_mode={}",
+        "[XiaoKe] CLI spawned: pid={}, bin={}, permission_mode={}",
         pid, claude_bin, permission_mode
     );
-    eprintln!("[TOKENICODE] args: {:?}", &args);
-    eprintln!("[TOKENICODE] PATH: {}", &enriched_path);
-    eprintln!("[TOKENICODE] resolved_env: {:?}", &resolved_env);
-    eprintln!("[TOKENICODE] cwd: {}", &params.cwd);
+    eprintln!("[XiaoKe] args: {:?}", &args);
+    eprintln!("[XiaoKe] PATH: {}", &enriched_path);
+    eprintln!("[XiaoKe] resolved_env: {:?}", &resolved_env);
+    eprintln!("[XiaoKe] cwd: {}", &params.cwd);
 
     // Capture stdin and store in StdinManager for sending follow-up messages
     let stdin = child.stdin.take().ok_or("Failed to capture stdin")?;
@@ -1555,7 +1555,7 @@ async fn start_claude_session(
                 Ok(Some(line)) => line,
                 Ok(None) => break,  // normal EOF
                 Err(e) => {
-                    eprintln!("[TOKENICODE:CRITICAL] stdout read error after {} lines: {}", line_count, e);
+                    eprintln!("[XiaoKe:CRITICAL] stdout read error after {} lines: {}", line_count, e);
                     break;
                 }
             };
@@ -1569,7 +1569,7 @@ async fn start_claude_session(
                     &line
                 };
                 eprintln!(
-                    "[TOKENICODE:stdout] #{} @{}ms type={} preview={}",
+                    "[XiaoKe:stdout] #{} @{}ms type={} preview={}",
                     line_count,
                     elapsed,
                     serde_json::from_str::<Value>(&line)
@@ -1655,13 +1655,13 @@ async fn start_claude_session(
                                 .map(String::from);
 
                             eprintln!(
-                                "[TOKENICODE] permission request: tool={} request_id={}",
+                                "[XiaoKe] permission request: tool={} request_id={}",
                                 tool_name, request_id
                             );
 
                             // Emit as a special stream message (reuses the working stream channel)
                             let perm_payload = serde_json::json!({
-                                "type": "tokenicode_permission_request",
+                                "type": "xiaoke_permission_request",
                                 "request_id": request_id,
                                 "tool_name": tool_name,
                                 "input": input,
@@ -1672,7 +1672,7 @@ async fn start_claude_session(
                             continue; // Don't forward to stream as normal msg
                         }
                         "hook_callback" => {
-                            // Auto-allow hook callbacks (TOKENICODE doesn't manage hooks)
+                            // Auto-allow hook callbacks (XiaoKe doesn't manage hooks)
                             let auto_resp = serde_json::json!({
                                 "type": "control_response",
                                 "response": {
@@ -1686,13 +1686,13 @@ async fn start_claude_session(
                         }
                         other => {
                             // Unknown control request subtype — deny by default (P0-4 fix)
-                            eprintln!("[TOKENICODE] control_request/{}: denying unknown subtype (request_id={})", other, request_id);
+                            eprintln!("[XiaoKe] control_request/{}: denying unknown subtype (request_id={})", other, request_id);
                             let deny_resp = serde_json::json!({
                                 "type": "control_response",
                                 "response": {
                                     "subtype": "success",
                                     "request_id": request_id,
-                                    "response": { "behavior": "deny", "message": format!("Unknown permission type '{}' denied by TOKENICODE", other) }
+                                    "response": { "behavior": "deny", "message": format!("Unknown permission type '{}' denied by XiaoKe", other) }
                                 }
                             });
                             let _ = stdin_clone.send(&sid_clone, &deny_resp.to_string()).await;
@@ -1701,7 +1701,7 @@ async fn start_claude_session(
                     }
                 } else {
                     eprintln!(
-                        "[TOKENICODE] control_request missing 'request' field: {}",
+                        "[XiaoKe] control_request missing 'request' field: {}",
                         &line[..line.len().min(200)]
                     );
                     // Auto-allow to avoid blocking CLI
@@ -1744,11 +1744,11 @@ async fn start_claude_session(
             };
             if let Err(e) = emit_to_frontend(&app_clone, &stream_event, json_to_emit) {
                 emit_fail_count += 1;
-                eprintln!("[TOKENICODE] emit_to_frontend failed (#{emit_fail_count}): {e}");
+                eprintln!("[XiaoKe] emit_to_frontend failed (#{emit_fail_count}): {e}");
                 // If emit fails repeatedly, the frontend is likely unreachable.
                 // Break the loop to trigger process_exit cleanup (#64).
                 if emit_fail_count >= 10 {
-                    eprintln!("[TOKENICODE:CRITICAL] {} consecutive emit failures — frontend unreachable, stopping stream", emit_fail_count);
+                    eprintln!("[XiaoKe:CRITICAL] {} consecutive emit failures — frontend unreachable, stopping stream", emit_fail_count);
                     break;
                 }
             } else {
@@ -1940,10 +1940,10 @@ async fn list_active_processes(
     Ok(state.active_ids().await)
 }
 
-/// Path to the file tracking TOKENICODE-managed session IDs
+/// Path to the file tracking XiaoKe-managed session IDs
 fn tracked_sessions_path() -> std::path::PathBuf {
     let home = dirs::home_dir().unwrap_or_else(|| std::path::PathBuf::from("."));
-    home.join(".tokenicode").join("tracked_sessions.txt")
+    home.join(".xiaoke").join("tracked_sessions.txt")
 }
 
 /// Load the set of tracked session IDs.
@@ -1963,7 +1963,7 @@ fn load_tracked_sessions() -> std::collections::HashSet<String> {
     }
 
     // Fallback: if tracking file is missing/empty, rebuild from disk.
-    // Use session_names.json (tokenicode_session_names.json) as a filter to avoid
+    // Use session_names.json (xiaoke_session_names.json) as a filter to avoid
     // importing Claude Code CLI or Her sessions. Only if session_names is also
     // missing do we fall back to importing all sessions (better than losing data).
     if set.is_empty() {
@@ -2018,7 +2018,7 @@ fn load_tracked_sessions() -> std::collections::HashSet<String> {
                     }
                 }
                 let mode = if names_filter.is_some() { "filtered by session_names" } else { "all (no filter)" };
-                eprintln!("[TOKENICODE] Rebuilt tracked_sessions.txt: {} sessions ({})", set.len(), mode);
+                eprintln!("[XiaoKe] Rebuilt tracked_sessions.txt: {} sessions ({})", set.len(), mode);
             }
         }
     }
@@ -2026,7 +2026,7 @@ fn load_tracked_sessions() -> std::collections::HashSet<String> {
     set
 }
 
-/// Register a CLI session ID as managed by TOKENICODE
+/// Register a CLI session ID as managed by XiaoKe
 #[tauri::command]
 async fn track_session(session_id: String) -> Result<(), String> {
     // Defense-in-depth: never persist desk-generated temporary IDs
@@ -2036,7 +2036,7 @@ async fn track_session(session_id: String) -> Result<(), String> {
     let path = tracked_sessions_path();
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)
-            .map_err(|e| format!("Failed to create .tokenicode dir: {}", e))?;
+            .map_err(|e| format!("Failed to create .xiaoke dir: {}", e))?;
     }
     use std::io::Write;
     let mut file = std::fs::OpenOptions::new()
@@ -2134,7 +2134,7 @@ async fn list_sessions() -> Result<Vec<Value>, String> {
         return Ok(vec![]);
     }
 
-    // Only show sessions tracked by TOKENICODE
+    // Only show sessions tracked by XiaoKe
     let tracked = load_tracked_sessions();
 
     let mut sessions = vec![];
@@ -2148,7 +2148,7 @@ async fn list_sessions() -> Result<Vec<Value>, String> {
                             if let Some(name) = path.file_stem() {
                                 let id = name.to_string_lossy().to_string();
 
-                                // Skip sessions not created by TOKENICODE
+                                // Skip sessions not created by XiaoKe
                                 if !tracked.contains(&id) {
                                     continue;
                                 }
@@ -2674,7 +2674,7 @@ fn extract_session_info(path: &std::path::Path) -> (String, String) {
 /// Decode project directory name back to readable path.
 ///
 /// Claude CLI encodes paths by replacing `/` with `-`, e.g.:
-///   /Users/tinyzhuang/Desktop/ppt-maker → -Users-tinyzhuang-Desktop-ppt-maker
+///   /Users/username/Desktop/ppt-maker → -Users-username-Desktop-ppt-maker
 ///
 /// Simple `.replace('-', '/')` fails when directory names contain hyphens
 /// (e.g. "ppt-maker" becomes "ppt/maker").
@@ -3537,22 +3537,22 @@ async fn save_temp_file(
     // Falls back to system temp if cwd is not set.
     let tmp = if let Some(ref dir) = cwd {
         let p = std::path::PathBuf::from(dir)
-            .join(".tokenicode")
+            .join(".xiaoke")
             .join("tmp");
         if std::fs::create_dir_all(&p).is_ok() {
-            // Ensure .tokenicode is gitignored in user's project
+            // Ensure .xiaoke is gitignored in user's project
             let gitignore = std::path::PathBuf::from(dir)
-                .join(".tokenicode")
+                .join(".xiaoke")
                 .join(".gitignore");
             if !gitignore.exists() {
                 let _ = std::fs::write(&gitignore, "*\n");
             }
             p
         } else {
-            std::env::temp_dir().join("tokenicode")
+            std::env::temp_dir().join("xiaoke")
         }
     } else {
-        std::env::temp_dir().join("tokenicode")
+        std::env::temp_dir().join("xiaoke")
     };
     std::fs::create_dir_all(&tmp).map_err(|e| format!("Failed to create temp dir: {}", e))?;
 
@@ -4708,7 +4708,7 @@ async fn toggle_skill_enabled(path: String, enabled: bool) -> Result<(), String>
 ///
 /// **Why this exists**: macOS ships `/usr/bin/git` as a shim. When Xcode Command Line Tools
 /// (CLT) are not installed, running `/usr/bin/git` spawns a **GUI dialog** asking the user to
-/// install CLT. TOKENICODE calls git for snapshot/rewind on every message, so this popup
+/// install CLT. XiaoKe calls git for snapshot/rewind on every message, so this popup
 /// would appear repeatedly.
 ///
 /// Strategy:
@@ -5985,7 +5985,7 @@ fn inject_unix_shell_path(dir: &str) {
         None => return,
     };
     let export_line = format!("export PATH=\"{}:$PATH\"", dir);
-    let marker = "# Added by TOKENICODE";
+    let marker = "# Added by XiaoKe";
     let block = format!("\n{}\n{}\n", marker, export_line);
 
     let profiles = [
@@ -7131,10 +7131,10 @@ async fn check_claude_auth() -> Result<AuthStatus, String> {
     }
 }
 
-/// Path to the session-names metadata file (~/.claude/tokenicode_session_names.json).
+/// Path to the session-names metadata file (~/.claude/xiaoke_session_names.json).
 fn session_names_path() -> Result<std::path::PathBuf, String> {
     let home = dirs::home_dir().ok_or("Cannot find home dir")?;
-    Ok(home.join(".claude").join("tokenicode_session_names.json"))
+    Ok(home.join(".claude").join("xiaoke_session_names.json"))
 }
 
 /// Load custom session display names from disk.
@@ -7158,12 +7158,12 @@ async fn save_custom_previews(data: Value) -> Result<(), String> {
     std::fs::write(&path, content).map_err(|e| format!("Failed to write session names: {}", e))
 }
 
-fn tokenicode_data_path(filename: &str) -> Result<std::path::PathBuf, String> {
+fn xiaoke_data_path(filename: &str) -> Result<std::path::PathBuf, String> {
     let home = dirs::home_dir().ok_or("Cannot find home dir")?;
-    let dir = home.join(".tokenicode");
+    let dir = home.join(".xiaoke");
     if !dir.exists() {
         std::fs::create_dir_all(&dir)
-            .map_err(|e| format!("Failed to create .tokenicode dir: {}", e))?;
+            .map_err(|e| format!("Failed to create .xiaoke dir: {}", e))?;
     }
     Ok(dir.join(filename))
 }
@@ -7171,7 +7171,7 @@ fn tokenicode_data_path(filename: &str) -> Result<std::path::PathBuf, String> {
 /// Load pinned session IDs from disk.
 #[tauri::command]
 async fn load_pinned_sessions() -> Result<Value, String> {
-    let path = tokenicode_data_path("pinned.json")?;
+    let path = xiaoke_data_path("pinned.json")?;
     if !path.exists() {
         return Ok(serde_json::json!([]));
     }
@@ -7183,7 +7183,7 @@ async fn load_pinned_sessions() -> Result<Value, String> {
 /// Save pinned session IDs to disk.
 #[tauri::command]
 async fn save_pinned_sessions(data: Value) -> Result<(), String> {
-    let path = tokenicode_data_path("pinned.json")?;
+    let path = xiaoke_data_path("pinned.json")?;
     let content = serde_json::to_string_pretty(&data)
         .map_err(|e| format!("Failed to serialize pinned sessions: {}", e))?;
     std::fs::write(&path, content).map_err(|e| format!("Failed to write pinned sessions: {}", e))
@@ -7192,7 +7192,7 @@ async fn save_pinned_sessions(data: Value) -> Result<(), String> {
 /// Load archived session IDs from disk.
 #[tauri::command]
 async fn load_archived_sessions() -> Result<Value, String> {
-    let path = tokenicode_data_path("archived.json")?;
+    let path = xiaoke_data_path("archived.json")?;
     if !path.exists() {
         return Ok(serde_json::json!([]));
     }
@@ -7204,7 +7204,7 @@ async fn load_archived_sessions() -> Result<Value, String> {
 /// Save archived session IDs to disk.
 #[tauri::command]
 async fn save_archived_sessions(data: Value) -> Result<(), String> {
-    let path = tokenicode_data_path("archived.json")?;
+    let path = xiaoke_data_path("archived.json")?;
     let content = serde_json::to_string_pretty(&data)
         .map_err(|e| format!("Failed to serialize archived sessions: {}", e))?;
     std::fs::write(&path, content).map_err(|e| format!("Failed to write archived sessions: {}", e))
@@ -7654,15 +7654,15 @@ mod decode_tests {
 
     #[test]
     fn test_simple_path() {
-        let result = decode_project_name("-Users-tinyzhuang-Documents-FocusZone");
-        assert_eq!(result, "/Users/tinyzhuang/Documents/FocusZone");
+        let result = decode_project_name("-Users-username-Documents-FocusZone");
+        assert_eq!(result, "/Users/username/Documents/FocusZone");
     }
 
     #[test]
     fn test_hyphenated_dir() {
         // ppt-maker exists on disk as a dir with hyphens in name
-        let result = decode_project_name("-Users-tinyzhuang-Desktop-ppt-maker");
-        assert_eq!(result, "/Users/tinyzhuang/Desktop/ppt-maker");
+        let result = decode_project_name("-Users-username-Desktop-ppt-maker");
+        assert_eq!(result, "/Users/username/Desktop/ppt-maker");
     }
 
     #[test]
@@ -7670,7 +7670,7 @@ mod decode_tests {
         // FocusZone/.claude-worktrees/condescending-brown
         // "/" → "-", "." → empty part making "--"
         let result = decode_project_name(
-            "-Users-tinyzhuang-Documents-FocusZone--claude-worktrees-condescending-brown",
+            "-Users-username-Documents-FocusZone--claude-worktrees-condescending-brown",
         );
         println!("Result: {}", result);
         // Should contain .claude somewhere
@@ -7683,18 +7683,18 @@ mod decode_tests {
 
     #[test]
     fn test_nested_subdir() {
-        let result = decode_project_name("-Users-tinyzhuang-Desktop-test-NiCode");
+        let result = decode_project_name("-Users-username-Desktop-test-NiCode");
         // test/NiCode or test-NiCode — depends on what exists on disk
         println!("Result: {}", result);
-        assert!(result.starts_with("/Users/tinyzhuang/Desktop/test"));
+        assert!(result.starts_with("/Users/username/Desktop/test"));
     }
 
     #[test]
     fn test_space_in_dir_name() {
         // "jd 设计" exists at ~/Desktop/jd 设计
-        let result = decode_project_name("-Users-tinyzhuang-Desktop-jd-设计");
+        let result = decode_project_name("-Users-username-Desktop-jd-设计");
         println!("Result: {}", result);
-        // Should decode to "/Users/tinyzhuang/Desktop/jd 设计"
-        assert_eq!(result, "/Users/tinyzhuang/Desktop/jd 设计");
+        // Should decode to "/Users/username/Desktop/jd 设计"
+        assert_eq!(result, "/Users/username/Desktop/jd 设计");
     }
 }

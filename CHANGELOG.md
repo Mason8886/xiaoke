@@ -1,8 +1,8 @@
 # Changelog / 更新日志
 
-All notable changes to TOKENICODE will be documented in this file.
+All notable changes to XiaoKe (小克) will be documented in this file.
 
-本文件记录 TOKENICODE 的所有重要更新。
+本文件记录 XiaoKe (小克) 的所有重要更新。
 
 ---
 

@@ -72,7 +72,7 @@ export function Sidebar() {
           {IS_ALPHA ? (
             <>
               <span className="text-[14px] font-bold tracking-tight text-text-primary">
-                TC<span style={{color: 'var(--color-accent)'}}>/</span>Alpha
+                小克<span style={{color: 'var(--color-accent)'}}>/</span>Alpha
               </span>
               <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase
                 bg-accent/15 text-accent leading-none">
@@ -80,7 +80,7 @@ export function Sidebar() {
               </span>
             </>
           ) : (
-            /* Text logo — TOKEN/CODE, slash uses theme accent */
+            /* Text logo — 小克, slash uses theme accent */
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setProfileOpen(true)}
@@ -90,7 +90,7 @@ export function Sidebar() {
                 <img src="/app-icon.png" alt="" className="w-8 h-8 rounded-lg shadow-sm" />
               </button>
               <span className="text-[18px] font-bold tracking-wide text-text-primary">
-                TOKEN<span className="text-accent">/</span>CODE
+                小克
               </span>
               <span className="text-[16px] text-success">♧</span>
             </div>

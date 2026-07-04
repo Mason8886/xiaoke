@@ -902,7 +902,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         '修复中文输入法偶发丢失焦点',
         '新增/导入 API 后自动生效，无需手动选择',
         'VPN 关闭后 API 自动切换直连，无需手动操作',
-        '双版本体系 — 一套代码支持 TCAlpha 内测版和 TOKENICODE 稳定版',
+        '双版本体系 — 一套代码支持 小克 Alpha 内测版和 小克 稳定版',
       ],
       en: [
         'Fix long conversation freeze — Streaming no longer stalls after 5+ turns, major performance improvement',
@@ -912,7 +912,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         'Fix CJK IME occasionally losing focus',
         'New/imported API providers auto-activate',
         'Auto-switch to direct connection when VPN is off',
-        'Dual-edition system — One codebase supports TCAlpha and TOKENICODE',
+        'Dual-edition system — One codebase supports XiaoKe Alpha and XiaoKe',
       ],
     },
   },
@@ -1206,14 +1206,14 @@ export const CHANGELOG: ChangelogEntry[] = [
     highlights: {
       zh: [
         '自动更新 — 每 10 分钟后台检查新版本，顶栏右上角出现更新按钮，一键下载安装重启',
-        'API 设置持久化 — 凭证和 API 配置备份到 ~/.tokenicode/，Windows 更新后不再丢失',
+        'API 设置持久化 — 凭证和 API 配置备份到 ~/.xiaoke/，Windows 更新后不再丢失',
         'Windows 命令行窗口消除 — 所有后台进程添加 CREATE_NO_WINDOW，彻底消灭闪烁的 CMD 窗口',
         '权限循环修复 — 权限响应改用原始 stdin 通道，GUI 始终跳过 CLI 权限提示',
         'CLI 路径搜索修复 — Windows 上跳过无扩展名的 JS 脚本，避免 error 193',
       ],
       en: [
         'Auto-update — Background check every 10 min, update button appears in top bar for one-click download & restart',
-        'API settings persistence — Credentials and API config backed up to ~/.tokenicode/, survives Windows updates',
+        'API settings persistence — Credentials and API config backed up to ~/.xiaoke/, survives Windows updates',
         'Windows CMD window elimination — All background processes use CREATE_NO_WINDOW, no more flashing CMD windows',
         'Permission loop fix — Permission responses now use raw stdin; GUI always skips CLI permission prompts',
         'CLI path search fix — Skips extensionless JS scripts on Windows, preventing error 193',
@@ -1573,12 +1573,12 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: '2025-12-01',
     highlights: {
       zh: [
-        'TOKENICODE 首发 — Claude Code 桌面 GUI 客户端',
+        '小克 首发 — Claude Code 桌面 GUI 客户端',
         'NDJSON 流式聊天 + 文件浏览器 + 会话管理 + 快照回退',
         '中英双语界面 + macOS 透明标题栏原生集成',
       ],
       en: [
-        'TOKENICODE initial release — Desktop GUI for Claude Code',
+        'XiaoKe initial release — Desktop GUI for Claude Code',
         'NDJSON streaming chat + file explorer + session management + snapshot/rewind',
         'Chinese/English bilingual UI + macOS transparent titlebar integration',
       ],

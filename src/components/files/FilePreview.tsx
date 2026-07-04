@@ -27,7 +27,7 @@ import { bridge } from '../../lib/tauri-bridge';
 import type { SkillTranslationConfig } from '../../lib/tauri-bridge';
 import { MarkdownRenderer } from '../shared/MarkdownRenderer';
 import { FileIcon } from '../shared/FileIcon';
-import { tokenicodeTheme, tokenicodeHighlight } from '../../lib/codemirror-theme';
+import { xiaokeTheme, xiaokeHighlight } from '../../lib/codemirror-theme';
 import { useT } from '../../lib/i18n';
 
 /* ================================================================
@@ -100,8 +100,8 @@ const BINARY_EXTS = new Set(['zip', 'tar', 'gz', 'rar', '7z', 'exe', 'dmg', 'pkg
   'woff', 'woff2', 'ttf', 'otf', 'eot',
   'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'db', 'sqlite']);
 
-const TRANSLATION_CONFIG_KEY = 'tokenicode-skill-translation-config-v1';
-const MARKDOWN_TRANSLATION_CACHE_KEY = 'tokenicode-skill-markdown-translations-v1';
+const TRANSLATION_CONFIG_KEY = 'xiaoke-skill-translation-config-v1';
+const MARKDOWN_TRANSLATION_CACHE_KEY = 'xiaoke-skill-markdown-translations-v1';
 
 const DEFAULT_TRANSLATION_CONFIG: SkillTranslationConfig = {
   baseUrl: '',
@@ -477,8 +477,8 @@ export function FilePreview() {
           /* Edit mode: CodeMirror 6 editor */
           <CodeMirror
             value={editContent ?? fileContent ?? ''}
-            extensions={[...(Array.isArray(langExtension) ? langExtension : [langExtension]), EditorView.lineWrapping, tokenicodeHighlight]}
-            theme={tokenicodeTheme}
+            extensions={[...(Array.isArray(langExtension) ? langExtension : [langExtension]), EditorView.lineWrapping, xiaokeHighlight]}
+            theme={xiaokeTheme}
             onChange={(value) => setEditContent(value)}
             height="100%"
             style={{ height: '100%', fontSize: '13px' }}
@@ -550,8 +550,8 @@ export function FilePreview() {
           /* Source view: read-only CodeMirror */
           <CodeMirror
             value={fileContent}
-            extensions={[...(Array.isArray(langExtension) ? langExtension : [langExtension]), EditorView.lineWrapping, tokenicodeHighlight]}
-            theme={tokenicodeTheme}
+            extensions={[...(Array.isArray(langExtension) ? langExtension : [langExtension]), EditorView.lineWrapping, xiaokeHighlight]}
+            theme={xiaokeTheme}
             editable={false}
             readOnly={true}
             height="100%"

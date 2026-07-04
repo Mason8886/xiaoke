@@ -261,8 +261,8 @@ export function InputBar() {
   // Listen for plan-execute events from PlanReviewCard and Enter shortcut
   useEffect(() => {
     const handler = () => handlePlanApprove();
-    window.addEventListener('tokenicode:plan-execute', handler);
-    return () => window.removeEventListener('tokenicode:plan-execute', handler);
+    window.addEventListener('xiaoke:plan-execute', handler);
+    return () => window.removeEventListener('xiaoke:plan-execute', handler);
   }, [handlePlanApprove]);
 
   // Floating approval cards — unresolved plan_review / question messages
@@ -311,8 +311,8 @@ export function InputBar() {
 
       textareaRef.current.insertFileChip({ fullPath, label: displayPath });
     };
-    window.addEventListener('tokenicode:tree-file-inline', onTreeFileInline);
-    return () => window.removeEventListener('tokenicode:tree-file-inline', onTreeFileInline);
+    window.addEventListener('xiaoke:tree-file-inline', onTreeFileInline);
+    return () => window.removeEventListener('xiaoke:tree-file-inline', onTreeFileInline);
   }, []);
 
   // Slash command state
@@ -349,11 +349,11 @@ export function InputBar() {
         }
       }
     };
-    window.addEventListener('tokenicode:rewind', handler);
-    return () => window.removeEventListener('tokenicode:rewind', handler);
+    window.addEventListener('xiaoke:rewind', handler);
+    return () => window.removeEventListener('xiaoke:rewind', handler);
   }, [canRewind, t]);
 
-  // Double-Esc rewind shortcut disabled (#36 / #71) — rewind feature is hidden in TOKENICODE
+  // Double-Esc rewind shortcut disabled (#36 / #71) — rewind feature is hidden in XiaoKe
 
   // Drag state (file drop)
   const [isDragging, setIsDragging] = useState(false);
@@ -487,7 +487,7 @@ export function InputBar() {
         return;
 
       case 'rewind':
-        window.dispatchEvent(new CustomEvent('tokenicode:rewind'));
+        window.dispatchEvent(new CustomEvent('xiaoke:rewind'));
         return;
 
       // /compact is handled in the session stdin commands group below
@@ -617,7 +617,7 @@ export function InputBar() {
 
 
       // --- All CLI commands: pass through to active session via stdin ---
-      // TOKENICODE is a GUI wrapper — all slash commands are handled by Claude Code CLI.
+      // XiaoKe is a GUI wrapper — all slash commands are handled by Claude Code CLI.
       default: {
         const stdinId = getActiveTabState().sessionMeta.stdinId;
         if (stdinId && tabId) {
@@ -715,7 +715,7 @@ export function InputBar() {
         resolved: true,
         interactionState: 'resolved',
       });
-      window.dispatchEvent(new CustomEvent('tokenicode:plan-execute'));
+      window.dispatchEvent(new CustomEvent('xiaoke:plan-execute'));
       return;
     }
 
@@ -883,7 +883,7 @@ export function InputBar() {
         const currentFp = envFingerprint();
         const sessionFp = getActiveTabState().sessionMeta.envFingerprint;
         if (currentFp !== sessionFp) {
-          console.warn('[TOKENICODE] API provider config changed, killing stale session');
+          console.warn('[XiaoKe] API provider config changed, killing stale session');
           bridge.killSession(stdinId).catch(() => {});
           if ((window as any).__claudeUnlisteners?.[stdinId]) {
             (window as any).__claudeUnlisteners[stdinId]();
@@ -898,7 +898,7 @@ export function InputBar() {
           const currentMode = useSettingsStore.getState().sessionMode;
           const spawnedMode = getActiveTabState().sessionMeta.snapshotMode;
           if (spawnedMode && currentMode !== spawnedMode) {
-            console.warn(`[TOKENICODE] Permission mode changed (${spawnedMode} -> ${currentMode}), killing stale session`);
+            console.warn(`[XiaoKe] Permission mode changed (${spawnedMode} -> ${currentMode}), killing stale session`);
             bridge.killSession(stdinId).catch(() => {});
             if ((window as any).__claudeUnlisteners?.[stdinId]) {
               (window as any).__claudeUnlisteners[stdinId]();
@@ -910,7 +910,7 @@ export function InputBar() {
           const currentContextMode = useSettingsStore.getState().contextWindowMode;
           const spawnedContextMode = getActiveTabState().sessionMeta.snapshotContextWindowMode ?? 'default';
           if (currentContextMode !== spawnedContextMode) {
-            console.warn(`[TOKENICODE] Context window mode changed (${spawnedContextMode} -> ${currentContextMode}), killing stale session`);
+            console.warn(`[XiaoKe] Context window mode changed (${spawnedContextMode} -> ${currentContextMode}), killing stale session`);
             bridge.killSession(stdinId).catch(() => {});
             if ((window as any).__claudeUnlisteners?.[stdinId]) {
               (window as any).__claudeUnlisteners[stdinId]();
@@ -926,7 +926,7 @@ export function InputBar() {
           if (spawnedModel && currentModel !== spawnedModel) {
             const oldShort = MODEL_OPTIONS.find((m) => m.id === spawnedModel)?.short ?? displayDeepSeekModelName(spawnedModel);
             const newShort = MODEL_OPTIONS.find((m) => m.id === currentModel)?.short ?? displayDeepSeekModelName(currentModel);
-            console.warn(`[TOKENICODE] Model changed (${oldShort} → ${newShort}), killing stale session`);
+            console.warn(`[XiaoKe] Model changed (${oldShort} → ${newShort}), killing stale session`);
             bridge.killSession(stdinId).catch(() => {});
             if ((window as any).__claudeUnlisteners?.[stdinId]) {
               (window as any).__claudeUnlisteners[stdinId]();
@@ -960,7 +960,7 @@ export function InputBar() {
           } catch (stdinErr) {
             // stdin write failed (broken pipe — process already exited).
             // Clean up dead listeners (P0-5 fix) and fall through to spawn a new process.
-            console.warn('[TOKENICODE] sendStdin failed, spawning new process:', stdinErr);
+            console.warn('[XiaoKe] sendStdin failed, spawning new process:', stdinErr);
             if ((window as any).__claudeUnlisteners?.[stdinId]) {
               (window as any).__claudeUnlisteners[stdinId]();
               delete (window as any).__claudeUnlisteners[stdinId];
@@ -1126,7 +1126,7 @@ export function InputBar() {
         const liveProviderId = useProviderStore.getState().activeProviderId || null;
         const liveResolvedModel = resolveModelForProvider(selectedModel);
         const liveContextWindow = getContextWindowForModel(liveResolvedModel, liveContextWindowMode);
-        console.log('[TOKENICODE:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: liveProviderId });
+        console.log('[XiaoKe:session] starting session', { cwd, stdinId: preGeneratedId, mode: liveSessionMode, provider: liveProviderId });
         const session = await bridge.startSession({
           prompt: text,
           cwd,
@@ -1139,7 +1139,7 @@ export function InputBar() {
           context_window: liveContextWindow,
           permission_mode: mapSessionModeToPermissionMode(liveSessionMode),
         });
-        console.log('[TOKENICODE:session] started successfully', { sessionId: session.session_id, pid: session.pid, cli: session.cli_path });
+        console.log('[XiaoKe:session] started successfully', { sessionId: session.session_id, pid: session.pid, cli: session.cli_path });
 
         // Store both: session_id for tracking, stdinId (preGeneratedId) for stdin communication
         setSessionMeta(tabId, {
@@ -1211,7 +1211,7 @@ export function InputBar() {
 
     // Strip ANSI escape codes so regex matching works on raw text
     const clean = stripAnsi(line).trim();
-    console.log('[TOKENICODE:stderr]', clean);
+    console.log('[XiaoKe:stderr]', clean);
 
     // Track last non-trivial stderr line for error reporting on unexpected exit
     if (clean && !/^\s*$/.test(clean)) {
@@ -1276,7 +1276,7 @@ export function InputBar() {
     // Drain any events that were queued while handler was unavailable
     const queue: any[] = (window as any).__claudeStreamQueue;
     if (queue && queue.length > 0) {
-      console.warn(`[TOKENICODE] draining ${queue.length} queued stream events on handler mount`);
+      console.warn(`[XiaoKe] draining ${queue.length} queued stream events on handler mount`);
       const pending = queue.splice(0);
       for (const msg of pending) handleStreamMessage(msg);
     }

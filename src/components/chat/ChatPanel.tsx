@@ -363,7 +363,7 @@ function ContextMeter({ sessionMeta, tabId, sessionStatus }: {
     } catch (e) {
       store.setSessionMeta(tabId, { pendingCommandMsgId: undefined });
       store.setSessionStatus(tabId, 'error');
-      console.warn('[TOKENICODE] manual compact failed:', e);
+      console.warn('[XiaoKe] manual compact failed:', e);
     } finally {
       setIsCompacting(false);
     }
@@ -506,8 +506,8 @@ export function ChatPanel() {
       useSettingsStore.getState().setSecondaryTab('files');
       useFileStore.getState().selectFile(filePath);
     };
-    window.addEventListener('tokenicode:open-file', onOpenFile);
-    return () => window.removeEventListener('tokenicode:open-file', onOpenFile);
+    window.addEventListener('xiaoke:open-file', onOpenFile);
+    return () => window.removeEventListener('xiaoke:open-file', onOpenFile);
   }, []);
 
   // --- Tool grouping: group 3+ consecutive tool_use messages ---
@@ -997,7 +997,7 @@ async function startDraftSession(folderPath: string) {
         // Replay any events that arrived while handler was briefly null (React effect cycle)
         const queue: any[] = (window as any).__claudeStreamQueue;
         if (queue && queue.length > 0) {
-          console.warn(`[TOKENICODE] replaying ${queue.length} queued pre-warm events`);
+          console.warn(`[XiaoKe] replaying ${queue.length} queued pre-warm events`);
           const pending = queue.splice(0);
           for (const queued of pending) handler(queued);
         }
@@ -1006,12 +1006,12 @@ async function startDraftSession(folderPath: string) {
         // Handler not yet available (InputBar not mounted or React effect cycle) — queue the event
         if (!(window as any).__claudeStreamQueue) (window as any).__claudeStreamQueue = [];
         (window as any).__claudeStreamQueue.push(msg);
-        console.warn('[TOKENICODE] pre-warm event queued (handler not ready):', msg.type);
+        console.warn('[XiaoKe] pre-warm event queued (handler not ready):', msg.type);
       }
     });
     const unlistenStderr = await onClaudeStderr(preWarmId, (line: string) => {
       // Log pre-warm stderr for debugging (errors here explain why CLI may fail)
-      console.warn('[TOKENICODE] pre-warm stderr:', line);
+      console.warn('[XiaoKe] pre-warm stderr:', line);
     });
 
     // Store unlisten per stdinId for multi-session support

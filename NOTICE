@@ -1,4 +1,4 @@
-TOKENICODE DeepSeek Alpha
+XiaoKe (小克)
 
 This project is a modified distribution of TOKENICODE.
 
@@ -14,8 +14,7 @@ Version 2.0. This modified project keeps the same license and preserves
 the original attribution.
 
 Major modifications in this fork include:
-  - DeepSeek / CC Switch model naming and API model normalization
-  - Codex skills discovery and de-duplication
-  - Skills metadata translation and SKILL.md preview translation
-  - UI changes for local DeepSeek-oriented workflows
-
+  - Rebranded as XiaoKe (小克) — a neutral Claude Code desktop GUI
+  - Removed updater endpoints and signing keys (user must configure their own)
+  - Renamed all identifiers, paths, and keys from tokenicode → xiaoke
+  - All original Claude Code, Provider, Skills, MCP, and session features preserved

@@ -231,7 +231,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
     store.setSessionMeta(tabId, { lastProgressAt: Date.now() });
 
     switch (msg.type) {
-      case 'tokenicode_permission_request': {
+      case 'xiaoke_permission_request': {
         // ExitPlanMode: auto-approve in non-plan modes; add plan_review card in plan mode
         if (msg.tool_name === 'ExitPlanMode') {
           const bgMeta = store.getTab(tabId)?.sessionMeta;
@@ -721,19 +721,19 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
 
     // Diagnostic: log first message and unrecognized types
     const KNOWN_TYPES = new Set([
-      'tokenicode_permission_request', 'stream_event', 'system', 'assistant',
+      'xiaoke_permission_request', 'stream_event', 'system', 'assistant',
       'user', 'human', 'tool_result', 'tool_use_summary', 'result', 'process_exit',
       'content_block_delta', 'rate_limit_event',
     ]);
     if (msg.type === 'system' || msg.type === 'process_exit') {
-      console.log('[TOKENICODE:stream]', msg.type, msg.subtype || '', msg.__stdinId || '');
+      console.log('[XiaoKe:stream]', msg.type, msg.subtype || '', msg.__stdinId || '');
     }
     if (!KNOWN_TYPES.has(msg.type)) {
-      console.warn('[TOKENICODE:stream] unhandled message type:', msg.type, msg);
+      console.warn('[XiaoKe:stream] unhandled message type:', msg.type, msg);
     }
 
     // --- Background routing: detect if this stream belongs to a non-active tab ---
-    // MUST run before tokenicode_permission_request and all other handlers
+    // MUST run before xiaoke_permission_request and all other handlers
     // to prevent messages from background sessions leaking into the active tab.
     const msgStdinId = msg.__stdinId;
     const ownerTabId = msgStdinId
@@ -746,7 +746,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
     if (isBackground) {
       // Diagnostic: log background routing for non-trivial message types
       if (msg.type !== 'stream_event') {
-        console.log('[TOKENICODE:route] background:', msg.type, 'owner:', ownerTabId, 'active:', activeTabId);
+        console.log('[XiaoKe:route] background:', msg.type, 'owner:', ownerTabId, 'active:', activeTabId);
       }
       handleBackgroundStreamMessage(msg, ownerTabId);
       return;
@@ -760,7 +760,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
     useChatStore.getState().setSessionMeta(tabId, { lastProgressAt: Date.now() });
 
     // --- SDK Permission Request (routed through stream channel for reliability) ---
-    if (msg.type === 'tokenicode_permission_request') {
+    if (msg.type === 'xiaoke_permission_request') {
 
       // ExitPlanMode: only show PlanReviewCard in Plan mode.
       // In other modes, auto-approve so the CLI continues without blocking.
@@ -947,7 +947,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
 
         // Diagnostic: log tool_use starts for debugging plan mode flow
         if (evt.type === 'content_block_start' && evt.content_block?.type === 'tool_use') {
-          console.log('[TOKENICODE:stream] tool_use start:', evt.content_block.name);
+          console.log('[XiaoKe:stream] tool_use start:', evt.content_block.name);
         }
 
         if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
@@ -1074,7 +1074,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
           });
         } else {
           // FI-3: Log unknown subtypes so we know what we're missing
-          console.warn('[TOKENICODE] Unhandled system subtype:', msg.subtype, msg);
+          console.warn('[XiaoKe] Unhandled system subtype:', msg.subtype, msg);
         }
         break;
 
@@ -1479,7 +1479,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
           const retryCandidate = pendingText || (typeof lastUserMsg === 'string' ? lastUserMsg : undefined);
           if (isThinkingSignatureError && retryCandidate) {
             const switchType = switchedFlag ? (meta.modelSwitched ? '模型' : 'API 提供商') : '会话';
-            console.warn(`[TOKENICODE] Thinking signature error after ${switchType} switch — auto-retrying without resume`);
+            console.warn(`[XiaoKe] Thinking signature error after ${switchType} switch — auto-retrying without resume`);
             const retryText = retryCandidate;
 
             // Kill the current (failed) process
@@ -1577,7 +1577,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
                 if (tabId) useSessionStore.getState().registerStdinTab(retryId, tabId);
                 bridge.trackSession(session.session_id).catch(() => {});
               } catch (retryErr) {
-                console.error('[TOKENICODE] Provider-switch auto-retry failed:', retryErr);
+                console.error('[XiaoKe] Provider-switch auto-retry failed:', retryErr);
                 // P0-5: Clean up the retry listeners on failure
                 if ((window as any).__claudeUnlisteners?.[retryId]) {
                   (window as any).__claudeUnlisteners[retryId]();
@@ -1602,7 +1602,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
         if (exitPlanModeSeenRef.current && getEffectiveMode(useChatStore.getState().getTab(tabId)?.sessionMeta) === 'code'
             && msg.subtype !== 'success') {
           exitPlanModeSeenRef.current = false;
-          console.log('[TOKENICODE] Code mode ExitPlanMode exit detected — auto-restarting with --resume');
+          console.log('[XiaoKe] Code mode ExitPlanMode exit detected — auto-restarting with --resume');
           // Clean up dead process
           const oldStdinId = useChatStore.getState().getTab(tabId)?.sessionMeta.stdinId;
           if (oldStdinId) {
@@ -1769,7 +1769,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
         );
         if (resultInputTokens > autoCompactThreshold && !autoCompactFiredRef.current && compactStdinId && msg.subtype === 'success') {
           autoCompactFiredRef.current = true;
-          console.log('[TOKENICODE] Auto-compact triggered:', { inputTokens: resultInputTokens, threshold: autoCompactThreshold });
+          console.log('[XiaoKe] Auto-compact triggered:', { inputTokens: resultInputTokens, threshold: autoCompactThreshold });
           const compactMsgId = generateMessageId();
           addMessage({
             id: compactMsgId,
@@ -1787,7 +1787,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
           setSessionStatus('running');
           setActivityStatus({ phase: 'thinking' });
           bridge.sendStdin(compactStdinId, '/compact').catch((err) => {
-            console.error('[TOKENICODE] Auto-compact failed:', err);
+            console.error('[XiaoKe] Auto-compact failed:', err);
           });
           // FI-4: Timeout fallback — if compact doesn't complete within 90s, auto-complete
           setTimeout(() => {
@@ -1877,7 +1877,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
       case 'process_exit': {
         // The CLI process has exited — clear the stdin handle but keep sessionId for resume
         clearPartial();
-        console.log('[TOKENICODE:session] process_exit received', { stdinId: msg.__stdinId });
+        console.log('[XiaoKe:session] process_exit received', { stdinId: msg.__stdinId });
 
         // Bug C fix (#27): Clear stuck pendingCommandMsgId (e.g., /compact without result)
         const exitPendingCmd = useChatStore.getState().getTab(tabId)?.sessionMeta.pendingCommandMsgId;
@@ -1951,11 +1951,11 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
         setSessionStatus('idle');
         if (!document.hasFocus() && 'Notification' in window) {
           if (Notification.permission === 'granted') {
-            new Notification('TOKENICODE', { body: t('notification.chatComplete') });
+            new Notification('小克', { body: t('notification.chatComplete') });
           } else if (Notification.permission === 'default') {
             Notification.requestPermission().then((perm) => {
               if (perm === 'granted') {
-                new Notification('TOKENICODE', { body: t('notification.chatComplete') });
+                new Notification('小克', { body: t('notification.chatComplete') });
               }
             }).catch(() => {});
           }
@@ -1997,7 +1997,7 @@ export function useStreamProcessor(config: StreamProcessorConfig) {
 
     } catch (err) {
       // P1-4: catch-all for unexpected errors in stream message processing
-      console.error('[TOKENICODE] handleStreamMessage error:', err, 'msg:', msg?.type, msg?.subtype);
+      console.error('[XiaoKe] handleStreamMessage error:', err, 'msg:', msg?.type, msg?.subtype);
       const errTabId = useSessionStore.getState().selectedSessionId;
       if (errTabId) {
         useChatStore.getState().addMessage(errTabId, {

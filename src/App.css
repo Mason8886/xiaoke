@@ -345,7 +345,7 @@ html, body, #root {
 }
 
 body {
-  font-family: var(--tokenicode-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif);
+  font-family: var(--xiaoke-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif);
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
@@ -357,7 +357,7 @@ body {
 
 :root[data-mono-follows-interface="true"] .font-mono,
 :root[data-mono-follows-interface="true"] .cm-editor .cm-scroller {
-  font-family: var(--tokenicode-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif) !important;
+  font-family: var(--xiaoke-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif) !important;
 }
 
 /* Allow text selection only in input areas and message content */
@@ -1029,7 +1029,7 @@ input, textarea, [contenteditable="true"],
 }
 
 body {
-  font-family: var(--tokenicode-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif);
+  font-family: var(--xiaoke-font-family, "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Arial, sans-serif);
   background: var(--skin-body-background);
 }
 

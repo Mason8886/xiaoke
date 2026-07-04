@@ -370,7 +370,7 @@ function TreeNode({
                 } else if (!result.droppedInTree) {
                   // Drop outside file tree → insert file chip in chat
                   window.dispatchEvent(
-                    new CustomEvent('tokenicode:tree-file-inline', { detail: result.sourcePath }),
+                    new CustomEvent('xiaoke:tree-file-inline', { detail: result.sourcePath }),
                   );
                 }
               }

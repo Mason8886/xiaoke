@@ -10,8 +10,8 @@ import type { SkillInfo, SkillTranslation, SkillTranslationConfig } from '../../
 
 type TranslationMap = Record<string, { name: string; description: string }>;
 
-const TRANSLATION_CACHE_KEY = 'tokenicode-skill-translations-v1';
-const TRANSLATION_CONFIG_KEY = 'tokenicode-skill-translation-config-v1';
+const TRANSLATION_CACHE_KEY = 'xiaoke-skill-translations-v1';
+const TRANSLATION_CONFIG_KEY = 'xiaoke-skill-translation-config-v1';
 
 const DEFAULT_TRANSLATION_CONFIG: SkillTranslationConfig = {
   baseUrl: '',

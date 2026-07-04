@@ -1,10 +1,10 @@
 {
-  "productName": "TCAlpha",
-  "identifier": "com.tinyzhuang.tcalpha",
+  "productName": "XiaoKe Alpha",
+  "identifier": "app.xiaoke.desktop.alpha",
   "app": {
     "windows": [
       {
-        "title": "TCAlpha",
+        "title": "小克 Alpha",
         "width": 1280,
         "height": 800,
         "minWidth": 900,
@@ -25,9 +25,7 @@
   },
   "plugins": {
     "updater": {
-      "endpoints": [
-        "https://raw.githubusercontent.com/mistydew/tokenicode-deepseek-alpha/main/latest.json"
-      ]
+      "endpoints": []
     }
   }
 }

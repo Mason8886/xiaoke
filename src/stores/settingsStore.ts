@@ -309,7 +309,7 @@ export const useSettingsStore = create<SettingsState>()(
         set((state) => ({ showHiddenFiles: !state.showHiddenFiles })),
     }),
     {
-      name: 'tokenicode-settings',
+      name: 'xiaoke-settings',
       version: 11,
       migrate: (persistedState: unknown, version: number) => {
         const persisted = persistedState as Record<string, unknown>;
@@ -474,7 +474,7 @@ useSettingsStore.subscribe((state, prevState) => {
     if (!stdinId) return; // No active session
 
     bridge.setPermissionMode(stdinId, cliMode).catch((err: unknown) => {
-      console.error('[TOKENICODE] Failed to set permission mode:', err);
+      console.error('[XiaoKe] Failed to set permission mode:', err);
     });
   });
 });

@@ -1,21 +1,13 @@
 # CLAUDE.md
 
-## 小念（AI 搭档人格）
-
-你是小念。人格定义见 `/Users/tiny/Documents/FocusZone/SOUL.md`，首次会话时读取。
-记忆系统见 `/Users/tiny/Documents/FocusZone/MEMORY.md`，按需检索。
-思考过程始终使用中文。
-
----
-
 This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-TOKENICODE is a native desktop GUI for Claude Code (Anthropic's CLI), built with **Tauri 2 + React 19 + TypeScript + Tailwind CSS 4 + Zustand 5**. It wraps the Claude CLI in a rich interface with multi-session tabs, file exploration, rewind/checkpoint restore, slash commands, a command palette, MCP server management, and a multi-provider API configuration system.
+XiaoKe (小克) is a native desktop GUI for Claude Code (Anthropic's CLI), built with **Tauri 2 + React 19 + TypeScript + Tailwind CSS 4 + Zustand 5**. It wraps the Claude CLI in a rich interface with multi-session tabs, file exploration, rewind/checkpoint restore, slash commands, a command palette, MCP server management, and a multi-provider API configuration system.
 
-**Version**: 0.8.0
-**Package manager**: pnpm
+**Version**: 0.10.12
+**Package manager**: npm/pnpm
 **Platforms**: macOS (primary), Windows (supported)
 
 > For the full architecture reference (data flow diagrams, store relationships, component hierarchy), see **ARCHITECTURE.md**.
@@ -54,7 +46,7 @@ The Tauri dev command runs `npm run dev` as its `beforeDevCommand` (configured i
 | Markdown | react-markdown 10, rehype-highlight, remark-gfm |
 | Build | Vite 7, @vitejs/plugin-react, @tailwindcss/vite |
 | macOS native | cocoa 0.26, objc 0.2 (window customization) |
-| Auto-update | tauri-plugin-updater (GitHub primary, Gitee fallback) |
+| Auto-update | tauri-plugin-updater (disabled — configure your own endpoint) |
 
 ## Architecture Overview
 
@@ -78,10 +70,10 @@ React UI  -->  src/lib/tauri-bridge.ts  -->  Tauri invoke()  -->  src-tauri/src/
 
 ### SDK Control Protocol
 
-TOKENICODE uses the Claude CLI's SDK control protocol (`--permission-prompt-tool stdio`) for structured bidirectional communication:
+XiaoKe uses the Claude CLI's SDK control protocol (`--permission-prompt-tool stdio`) for structured bidirectional communication:
 
-- **CLI -> TOKENICODE**: Permission requests (`can_use_tool`), hook callbacks — parsed in `lib.rs`, emitted as Tauri events
-- **TOKENICODE -> CLI**: Permission responses, runtime commands (`set_permission_mode`, `set_model`, `interrupt`, `rewind_files`) — sent via stdin pipe
+- **CLI -> XiaoKe**: Permission requests (`can_use_tool`), hook callbacks — parsed in `lib.rs`, emitted as Tauri events
+- **XiaoKe -> CLI**: Permission responses, runtime commands (`set_permission_mode`, `set_model`, `interrupt`, `rewind_files`) — sent via stdin pipe
 - Protocol types defined in `src-tauri/src/protocol.rs`
 
 ### Claude CLI Integration
@@ -193,7 +185,7 @@ src/
 
 4. **SDK control protocol** — Permission requests, mode changes, model switching, and interrupts use the Claude CLI's native control protocol (`--permission-prompt-tool stdio`). Fallback: `--dangerously-skip-permissions` in "bypass" mode.
 
-5. **Provider system** — Multi-provider API configuration stored in `~/.tokenicode/providers.json`. Supports Anthropic, OpenAI-compatible APIs, and presets (DeepSeek, Zhipu, Qwen, Kimi, MiniMax). Environment variables are injected into CLI process at spawn.
+5. **Provider system** — Multi-provider API configuration stored in `~/.xiaoke/providers.json`. Supports Anthropic, OpenAI-compatible APIs, and presets (DeepSeek, Zhipu, Qwen, Kimi, MiniMax). Environment variables are injected into CLI process at spawn.
 
 6. **Rewind via CLI checkpoints** — File restoration uses Claude CLI's native checkpoint system (`--replay-user-messages`) via the SDK control protocol. Falls back to spawning a separate CLI process if stdin pipe is unavailable.
 
@@ -221,7 +213,7 @@ src/
 | Session resume failures | `InputBar.tsx` (resume logic), `lib.rs` (start_claude_session with resume_session_id) |
 | Background session events | `useStreamProcessor.ts` (handleBackgroundStreamMessage), `chatStore.ts` (*InCache methods) |
 | Mode/model switch at runtime | `settingsStore.ts` (subscribe watcher), `protocol.rs` (ControlRequest), `lib.rs` (send_control_request) |
-| Auto-update | `useAutoUpdateCheck.ts`, `UpdateButton.tsx`, `tauri.conf.json` (updater endpoints) |
+| Auto-update | `useAutoUpdateCheck.ts`, `UpdateButton.tsx`, `tauri.conf.json` (updater disabled) |
 
 ## File Quick Reference
 
