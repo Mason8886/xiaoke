@@ -7512,8 +7512,7 @@ pub fn run() {
             cleanup_tracked_sessions();
 
             // Propagate proxy env vars from login shell to the process environment
-            // so that ALL HTTP clients (including the updater plugin) can reach
-            // external services through the proxy.
+            // so that ALL HTTP clients can reach external services through the proxy.
             #[cfg(not(target_os = "windows"))]
             {
                 let proxy_env = login_shell_proxy_env();
@@ -7526,11 +7525,6 @@ pub fn run() {
                     }
                 }
             }
-
-            // Register updater plugin (desktop only)
-            #[cfg(desktop)]
-            app.handle()
-                .plugin(tauri_plugin_updater::Builder::new().build())?;
 
             #[cfg(not(desktop))]
             let _ = app;
