@@ -731,6 +731,125 @@ const messages: Record<Locale, Record<string, string>> = {
     'dashboard.hint': '点击卡片开始使用对应功能（功能陆续开放中）',
     'panel.dashboard': '工作台',
 
+    // Dashboard prompt modals
+    'dashboard.modalTitle1': '一键创建 AI 项目需求文档',
+    'dashboard.modalTitle2': '一键生成前端/后端开发计划',
+    'dashboard.modalTitle3': '自动生成 Claude Code / Codex 修改指令',
+    'dashboard.modalTitle4': 'Skill 管理器中文化',
+    'dashboard.modalTitle5': 'API Provider 可视化管理',
+    'dashboard.modalTitle6': 'MCP 管理器',
+    'dashboard.modalTitle7': 'GitHub 项目助手',
+    'dashboard.prompt1': `请帮我创建一个 AI 项目的需求文档。项目信息如下：
+
+【项目名称】（请填写你的项目名称）
+【项目类型】Web 应用 / 移动应用 / 桌面应用 / CLI 工具 / API 服务
+【目标用户】（请描述目标用户群体）
+【核心功能】
+1.
+2.
+3.
+【技术栈偏好】（如 React + Node.js / Vue + Python / Rust + Tauri 等）
+【特殊需求】（如多语言支持、无障碍访问、离线功能等）
+
+请生成一份结构化的需求文档，包含：
+- 项目概述与背景
+- 功能需求（按优先级排列）
+- 非功能需求（性能、安全、可扩展性等）
+- 技术架构建议
+- 里程碑与交付计划`,
+    'dashboard.prompt2': `请根据以下需求，生成一份详细的前端/后端开发计划。
+
+【项目需求描述】
+（请在此处粘贴或描述你的项目需求）
+
+【开发方向】前端 / 后端 / 全栈
+
+请生成包含以下内容的开发计划：
+- 技术选型建议与理由
+- 项目目录结构设计
+- 核心模块划分与职责说明
+- API 接口设计（如是后端）或组件树设计（如是前端）
+- 数据模型设计
+- 开发阶段划分（按优先级）
+- 每个阶段的任务分解（含预估工时）
+- 关键风险点与应对方案`,
+    'dashboard.prompt3': `请根据以下需求或问题，生成 Claude Code / Codex 可以直接执行的修改指令。
+
+【需求/问题描述】
+（请在此处描述你想要实现的功能或修复的问题）
+
+【相关文件路径】（可选，如已知）
+- src/
+-
+
+【约束条件】
+- 保持现有 API 兼容性：是 / 否
+- 需要添加测试：是 / 否
+- 需要更新文档：是 / 否
+
+请生成：
+1. 修改目标概述（一句话说明要做什么）
+2. 需要修改的文件列表
+3. 每个文件的具体修改指令（Add / Edit / Delete 操作）
+4. 修改后的验证步骤
+5. 注意事项与潜在副作用`,
+    'dashboard.prompt4': `请帮我将以下 Skill 配置翻译为中文，并优化其结构和可读性。
+
+【原始 Skill 内容】
+（请在此处粘贴你的英文 Skill 配置或描述）
+
+请执行以下操作：
+1. 将 Skill 名称、描述、提示词翻译为地道的中文
+2. 保留所有技术术语的准确性（如 API、JSON、MCP 等不翻译）
+3. 保持原有的 YAML/JSON 结构不变
+4. 优化中文表达，使其简洁清晰
+5. 如有必要，添加中文注释说明每个字段的用途`,
+    'dashboard.prompt5': `请帮我配置一个 API Provider。以下是相关信息：
+
+【Provider 名称】（如 OpenRouter / DeepSeek / 自定义）
+【API 格式】Anthropic Messages / OpenAI Chat Completions
+【API 端点 URL】（如 https://api.openai.com/v1）
+【API Key】（请自行填入，勿分享给他人）
+【需要映射的模型】
+- Opus 级别 → （填写 provider 对应的模型名）
+- Sonnet 级别 → （填写 provider 对应的模型名）
+- Haiku 级别 → （填写 provider 对应的模型名）
+【代理设置】（如需要，填写代理地址）
+【额外环境变量】（如有特殊配置需求）
+
+请帮我确认：
+1. API 端点格式是否正确
+2. 模型映射是否合理
+3. 是否需要额外的请求头配置`,
+    'dashboard.prompt6': `请帮我配置一个 MCP (Model Context Protocol) 服务器。
+
+【MCP 服务器名称】
+【服务器类型】stdio / SSE
+【启动命令】（如 npx、python、node 等）
+【命令参数】
+【环境变量】（格式：KEY=VALUE）
+
+请帮我：
+1. 验证命令和参数的正确性
+2. 检查是否存在已知的兼容性问题
+3. 如有多个 MCP 服务器，建议加载顺序
+4. 提醒必要的权限和网络访问要求`,
+    'dashboard.prompt7': `请帮我处理以下 GitHub 相关任务。
+
+【任务类型】管理 Issues / 审查 PR / 查看代码 / 其他
+【仓库地址】（如 owner/repo）
+【具体描述】
+（请在此处描述你的 GitHub 任务需求）
+
+请帮我：
+1. 分析当前状态并给出建议
+2. 如涉及代码审查，检查代码质量、安全性、性能
+3. 如涉及 Issues，帮助分类、优先级排序
+4. 生成清晰的摘要和行动建议`,
+    'dashboard.copyPrompt': '复制提示词',
+    'dashboard.copied': '已复制到剪贴板',
+    'dashboard.closeModal': '关闭',
+
     // Permission dialog
     'perm.title': '需要文件访问权限',
     'perm.desc': `${APP_NAME} 需要「完整磁盘访问」权限才能正常读写项目文件。请在系统设置中授权，否则部分功能可能受限。`,
@@ -1461,6 +1580,125 @@ const messages: Record<Locale, Record<string, string>> = {
     'dashboard.desc7': 'Interact with GitHub repos, manage issues, PRs and code reviews',
     'dashboard.hint': 'Click a card to get started (features rolling out gradually)',
     'panel.dashboard': 'Dashboard',
+
+    // Dashboard prompt modals
+    'dashboard.modalTitle1': 'One-Click AI Project Requirements Doc',
+    'dashboard.modalTitle2': 'One-Click Dev Plan Generator',
+    'dashboard.modalTitle3': 'Auto-Generate Claude Code / Codex Instructions',
+    'dashboard.modalTitle4': 'Skill Manager (Chinese UI)',
+    'dashboard.modalTitle5': 'API Provider Visual Management',
+    'dashboard.modalTitle6': 'MCP Manager',
+    'dashboard.modalTitle7': 'GitHub Project Assistant',
+    'dashboard.prompt1': `Please help me create a requirements document for an AI project. Project info:
+
+[Project Name] (fill in your project name)
+[Project Type] Web App / Mobile App / Desktop App / CLI Tool / API Service
+[Target Users] (describe your target user group)
+[Core Features]
+1.
+2.
+3.
+[Tech Stack Preference] (e.g. React + Node.js / Vue + Python / Rust + Tauri)
+[Special Requirements] (e.g. i18n support, accessibility, offline functionality)
+
+Please generate a structured requirements document including:
+- Project overview & background
+- Functional requirements (prioritized)
+- Non-functional requirements (performance, security, scalability)
+- Technical architecture recommendations
+- Milestones & delivery plan`,
+    'dashboard.prompt2': `Please generate a detailed frontend/backend development plan based on the following requirements.
+
+[Project Requirements]
+(Paste or describe your project requirements here)
+
+[Direction] Frontend / Backend / Full-stack
+
+Please generate a development plan including:
+- Technology selection with rationale
+- Project directory structure
+- Core module breakdown with responsibilities
+- API design (backend) or component tree design (frontend)
+- Data model design
+- Development phases (prioritized)
+- Task breakdown per phase (with estimated hours)
+- Key risks & mitigation strategies`,
+    'dashboard.prompt3': `Please generate Claude Code / Codex executable modification instructions based on the following requirements or issue.
+
+[Requirements / Issue Description]
+(Describe the feature you want to implement or the bug to fix)
+
+[Relevant File Paths] (optional, if known)
+- src/
+-
+
+[Constraints]
+- Maintain existing API compatibility: Yes / No
+- Add tests: Yes / No
+- Update docs: Yes / No
+
+Please generate:
+1. Summary of the change (one sentence)
+2. List of files to modify
+3. Specific modification instructions per file (Add / Edit / Delete operations)
+4. Verification steps after changes
+5. Notes & potential side effects`,
+    'dashboard.prompt4': `Please help me translate the following Skill configuration to Chinese and optimize its structure and readability.
+
+[Original Skill Content]
+(Paste your English skill configuration or description here)
+
+Please:
+1. Translate skill name, description, and prompts into natural Chinese
+2. Keep all technical terms accurate (API, JSON, MCP, etc. — do not translate)
+3. Preserve the original YAML/JSON structure
+4. Optimize Chinese expressions for clarity and conciseness
+5. Add Chinese comments explaining each field's purpose if needed`,
+    'dashboard.prompt5': `Please help me configure an API Provider. Here's the relevant info:
+
+[Provider Name] (e.g. OpenRouter / DeepSeek / Custom)
+[API Format] Anthropic Messages / OpenAI Chat Completions
+[API Endpoint URL] (e.g. https://api.openai.com/v1)
+[API Key] (fill in yourself, do not share)
+[Models to map]
+- Opus tier → (provider model name)
+- Sonnet tier → (provider model name)
+- Haiku tier → (provider model name)
+[Proxy Settings] (if needed, provide proxy URL)
+[Extra Environment Variables] (if any special config needed)
+
+Please help me verify:
+1. API endpoint format is correct
+2. Model mappings are reasonable
+3. Whether additional request headers are needed`,
+    'dashboard.prompt6': `Please help me configure an MCP (Model Context Protocol) server.
+
+[MCP Server Name]
+[Server Type] stdio / SSE
+[Start Command] (e.g. npx, python, node)
+[Command Arguments]
+[Environment Variables] (format: KEY=VALUE)
+
+Please help me:
+1. Verify command and arguments are correct
+2. Check for known compatibility issues
+3. If multiple MCP servers, suggest loading order
+4. Note any required permissions and network access`,
+    'dashboard.prompt7': `Please help me with the following GitHub-related task.
+
+[Task Type] Manage Issues / Review PR / Browse Code / Other
+[Repository] (e.g. owner/repo)
+[Details]
+(Describe your GitHub task requirements here)
+
+Please help me:
+1. Analyze current status and provide recommendations
+2. For code reviews, check code quality, security, performance
+3. For issues, help categorize, prioritize
+4. Generate clear summary and action items`,
+    'dashboard.copyPrompt': 'Copy Prompt',
+    'dashboard.copied': 'Copied to clipboard',
+    'dashboard.closeModal': 'Close',
 
     // Permission dialog
     'perm.title': 'File Access Required',

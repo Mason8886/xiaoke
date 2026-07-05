@@ -1,4 +1,6 @@
+import { useState, useCallback } from 'react';
 import { useT } from '../../lib/i18n';
+import { DashboardPromptModal } from './DashboardPromptModal';
 
 interface DashboardCard {
   key: string;
@@ -38,6 +40,10 @@ const CARD_ACCENTS = [
 
 export function DashboardPanel() {
   const t = useT();
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
+
+  const openModal = useCallback((idx: number) => setModalIndex(idx), []);
+  const closeModal = useCallback(() => setModalIndex(null), []);
 
   return (
     <div className="flex flex-col h-full">
@@ -57,6 +63,7 @@ export function DashboardPanel() {
           {CARDS.map((card, idx) => (
             <button
               key={card.key}
+              onClick={() => openModal(idx)}
               className="group relative flex items-start gap-3 p-4 rounded-xl
                 bg-bg-secondary border border-border-subtle
                 hover:border-border-default hover:bg-bg-tertiary
@@ -113,6 +120,13 @@ export function DashboardPanel() {
           {t('dashboard.hint')}
         </p>
       </div>
+
+      {/* Prompt modal */}
+      <DashboardPromptModal
+        open={modalIndex !== null}
+        cardIndex={modalIndex ?? 0}
+        onClose={closeModal}
+      />
     </div>
   );
 }
