@@ -739,113 +739,308 @@ const messages: Record<Locale, Record<string, string>> = {
     'dashboard.modalTitle5': 'API Provider 可视化管理',
     'dashboard.modalTitle6': 'MCP 管理器',
     'dashboard.modalTitle7': 'GitHub 项目助手',
-    'dashboard.prompt1': `请帮我创建一个 AI 项目的需求文档。项目信息如下：
+    'dashboard.prompt1': `你是一位资深产品经理。请帮我为以下项目生成一份专业的 AI 项目需求文档（PRD）。
 
-【项目名称】（请填写你的项目名称）
-【项目类型】Web 应用 / 移动应用 / 桌面应用 / CLI 工具 / API 服务
-【目标用户】（请描述目标用户群体）
+【项目名称】（填写你的项目名称）
+【项目类型】Web 应用 / 移动应用 / 桌面应用 / CLI 工具 / API 服务 / 其他
+【目标用户】（描述谁会使用这个产品，他们的核心痛点是什么）
 【核心功能】
 1.
 2.
 3.
-【技术栈偏好】（如 React + Node.js / Vue + Python / Rust + Tauri 等）
-【特殊需求】（如多语言支持、无障碍访问、离线功能等）
+4.
+5.
+【技术栈偏好】（如 React + Node.js / Vue + Python / Rust + Tauri / Next.js 等）
+【特殊约束】（如多语言、无障碍访问、离线支持、合规要求等）
 
-请生成一份结构化的需求文档，包含：
-- 项目概述与背景
-- 功能需求（按优先级排列）
-- 非功能需求（性能、安全、可扩展性等）
-- 技术架构建议
-- 里程碑与交付计划`,
-    'dashboard.prompt2': `请根据以下需求，生成一份详细的前端/后端开发计划。
+请按以下结构生成 PRD，并保存为 PRD.md：
+
+## 1. 项目概述与背景
+- 一句话描述项目是什么
+- 解决什么问题（用户痛点）
+- 与现有方案的差异化
+
+## 2. 目标用户画像
+- 主要用户群体及特征
+- 每个群体的核心使用场景
+
+## 3. 核心功能列表
+- 按 P0/P1/P2 优先级排列
+- 每个功能用 1-2 句话描述
+
+## 4. 用户流程
+- 核心用户旅程（可用文字或简单的 ASCII 流程图描述）
+
+## 5. 页面/模块结构
+- 列出主要页面或模块及其职责
+
+## 6. 数据模型概要
+- 核心实体及其关键字段
+- 实体之间的关系
+
+## 7. 技术栈建议
+- 推荐的前端/后端技术及理由（考虑团队规模、项目周期）
+- 是否需要 AI/ML 能力
+
+## 8. MVP 范围
+- 第一版必须包含的功能
+- 明确排除的功能
+
+## 9. 风险与假设
+- 关键技术风险
+- 产品假设及验证方式
+
+## 10. 里程碑建议
+- 建议的开发阶段和时间估算
+
+请用中文输出，技术术语可保留英文。`,
+    'dashboard.prompt2': `你是一位资深全栈工程师。请帮我为以下项目生成详细的开发计划。
 
 【项目需求描述】
 （请在此处粘贴或描述你的项目需求）
 
 【开发方向】前端 / 后端 / 全栈
 
-请生成包含以下内容的开发计划：
-- 技术选型建议与理由
-- 项目目录结构设计
-- 核心模块划分与职责说明
-- API 接口设计（如是后端）或组件树设计（如是前端）
-- 数据模型设计
-- 开发阶段划分（按优先级）
-- 每个阶段的任务分解（含预估工时）
-- 关键风险点与应对方案`,
-    'dashboard.prompt3': `请根据以下需求或问题，生成 Claude Code / Codex 可以直接执行的修改指令。
+请先快速浏览项目现有代码结构，然后按以下结构生成开发计划：
+
+## 1. 技术选型建议
+- 推荐的前端框架 / 后端框架及理由
+- 数据库选型建议
+- 关键第三方服务/库推荐
+
+## 2. 项目目录结构
+- 推荐的目录组织方式
+- 各目录职责说明
+
+## 3. 前端开发计划（如适用）
+- 页面清单与路由设计
+- 组件树结构（核心组件及其关系）
+- 状态管理方案
+- UI/UX 注意事项
+
+## 4. 后端开发计划（如适用）
+- API 接口设计（RESTful 或 GraphQL）
+- 中间件/拦截器设计
+- 数据模型设计（核心表/集合及其字段）
+- 认证与授权方案（如需要）
+
+## 5. 开发阶段与里程碑
+- 按优先级划分开发阶段
+- 每个阶段的任务分解及预估工时
+- 阶段间的依赖关系
+
+## 6. 测试计划
+- 单元测试策略
+- 集成测试策略
+- 端到端测试关键场景
+
+## 7. 关键风险与应对方案
+- 技术风险
+- 进度风险
+- 第三方依赖风险
+
+请将输出保存为以下文件：
+- frontend-plan.md（前端部分）
+- backend-plan.md（后端部分）
+- api-design.md（API 设计）
+
+请用中文输出，技术术语可保留英文。`,
+    'dashboard.prompt3': `你是一位谨慎的软件工程师。请帮我根据以下需求生成安全的 Claude Code / Codex 修改指令。
 
 【需求/问题描述】
 （请在此处描述你想要实现的功能或修复的问题）
-
-【相关文件路径】（可选，如已知）
-- src/
--
 
 【约束条件】
 - 保持现有 API 兼容性：是 / 否
 - 需要添加测试：是 / 否
 - 需要更新文档：是 / 否
 
-请生成：
-1. 修改目标概述（一句话说明要做什么）
-2. 需要修改的文件列表
-3. 每个文件的具体修改指令（Add / Edit / Delete 操作）
-4. 修改后的验证步骤
-5. 注意事项与潜在副作用`,
-    'dashboard.prompt4': `请帮我将以下 Skill 配置翻译为中文，并优化其结构和可读性。
+请按以下步骤操作：
 
-【原始 Skill 内容】
-（请在此处粘贴你的英文 Skill 配置或描述）
+## 第一步：检查项目结构
+先浏览项目目录结构和关键文件，了解现有代码组织方式。
 
-请执行以下操作：
-1. 将 Skill 名称、描述、提示词翻译为地道的中文
-2. 保留所有技术术语的准确性（如 API、JSON、MCP 等不翻译）
-3. 保持原有的 YAML/JSON 结构不变
-4. 优化中文表达，使其简洁清晰
-5. 如有必要，添加中文注释说明每个字段的用途`,
-    'dashboard.prompt5': `请帮我配置一个 API Provider。以下是相关信息：
+## 第二步：分析影响范围
+- 列出所有需要修改的文件
+- 标注每个文件的修改类型（新增 / 编辑 / 删除）
+- 评估修改之间的依赖关系
 
-【Provider 名称】（如 OpenRouter / DeepSeek / 自定义）
-【API 格式】Anthropic Messages / OpenAI Chat Completions
-【API 端点 URL】（如 https://api.openai.com/v1）
-【API Key】（请自行填入，勿分享给他人）
-【需要映射的模型】
-- Opus 级别 → （填写 provider 对应的模型名）
-- Sonnet 级别 → （填写 provider 对应的模型名）
-- Haiku 级别 → （填写 provider 对应的模型名）
-【代理设置】（如需要，填写代理地址）
-【额外环境变量】（如有特殊配置需求）
+## 第三步：生成修改指令
+对每个文件，给出具体的修改指令：
+- 对于新增：说明在哪里创建文件、文件内容概要
+- 对于编辑：说明要修改的位置（函数/类/区块）和修改内容
+- 对于删除：说明要删除的内容及原因
 
-请帮我确认：
-1. API 端点格式是否正确
-2. 模型映射是否合理
-3. 是否需要额外的请求头配置`,
-    'dashboard.prompt6': `请帮我配置一个 MCP (Model Context Protocol) 服务器。
+### 重要原则：
+- 每次只做小范围、渐进式的修改
+- 避免大规模重写
+- 每完成一个步骤后运行测试或构建验证
+- 每步修改后总结变更了哪些文件
 
-【MCP 服务器名称】
-【服务器类型】stdio / SSE
-【启动命令】（如 npx、python、node 等）
-【命令参数】
-【环境变量】（格式：KEY=VALUE）
+## 第四步：验证计划
+- 列出每个步骤完成后的验证命令
+- 如 npm run build / cargo check / npx tsc --noEmit / pytest 等
 
-请帮我：
-1. 验证命令和参数的正确性
-2. 检查是否存在已知的兼容性问题
-3. 如有多个 MCP 服务器，建议加载顺序
-4. 提醒必要的权限和网络访问要求`,
-    'dashboard.prompt7': `请帮我处理以下 GitHub 相关任务。
+## 第五步：总结
+- 汇总所有变更文件清单
+- 标注潜在的副作用和回滚方案
 
-【任务类型】管理 Issues / 审查 PR / 查看代码 / 其他
-【仓库地址】（如 owner/repo）
-【具体描述】
-（请在此处描述你的 GitHub 任务需求）
+请用中文输出，生成可直接复制到 Claude Code 或 Codex 中执行的指令。`,
+    'dashboard.prompt4': `你是一位技术文档中文化专家。请帮我审查和组织项目中的 Skill 配置。
 
-请帮我：
-1. 分析当前状态并给出建议
-2. 如涉及代码审查，检查代码质量、安全性、性能
-3. 如涉及 Issues，帮助分类、优先级排序
-4. 生成清晰的摘要和行动建议`,
+请按以下步骤操作：
+
+## 第一步：检查 Skill 目录
+先扫描以下位置找到所有 Skill 文件：
+- .claude/skills/ （项目级 Skill）
+- ~/.claude/skills/ （全局 Skill）
+列出所有找到的 Skill 及其文件路径。
+
+## 第二步：逐一分析每个 Skill
+对每个 Skill，用中文解释：
+- Skill 的名称和用途
+- 触发条件和适用场景
+- 主要工具和模型配置
+- 输入输出格式
+
+## 第三步：中文化建议
+- 将 Skill 名称、描述翻译为地道的中文
+- 翻译重要的使用说明和提示词
+- 保留技术术语的英文原文（如 API、JSON、MCP、SDK 等）
+- 保留所有代码、命令和配置值不变
+
+## 第四步：组织优化
+- 识别重复或低价值的 Skill，给出合并或删除建议
+- 建议 Skill 的分类和命名规范
+- 提出目录结构调整建议
+
+## 第五步：输出报告
+生成一份 SkillManageReport.md，包含：
+- Skill 清单及中文说明
+- 中文化翻译对照表
+- 优化建议（重复/低价值/命名改进）
+- 推荐的组织结构
+
+### 安全提示：
+- 不要删除任何文件，除非用户明确确认
+- 修改前先备份原文件
+- 所有建议需经用户审核后才能执行`,
+    'dashboard.prompt5': `你是一位 API 配置安全专家。请帮我审查和管理项目中的 API Provider 配置。
+
+请按以下步骤操作：
+
+## 第一步：检查 Provider 配置
+先找到并读取 Provider 配置文件（通常在 ~/.xiaoke/providers.json 或项目设置中）。
+列出所有已配置的 Provider。
+
+## 第二步：逐一分析每个 Provider
+对每个 Provider，用中文解释：
+- Provider 名称和 API 格式（Anthropic / OpenAI Compatible）
+- Base URL 的实际指向（是否官方、是否代理）
+- 模型映射关系（Opus/Sonnet/Haiku 分别映射到哪个实际模型）
+- API Key 的存储位置（环境变量 / 配置文件 / 系统密钥链）
+
+## 第三步：安全检查
+- 检查配置文件中是否存在硬编码的 API Key
+- 检查 API Key 是否有泄露风险（如被提交到 git）
+- 检查 .gitignore 是否排除了敏感配置文件
+- 检查代理设置是否安全
+
+## 第四步：优化建议
+- 建议安全的 Provider 预设方案
+- 推荐使用环境变量而非配置文件存储 API Key
+- 如有多余或重复的 Provider，建议清理
+- 对不安全的配置给出具体的修复步骤
+
+### 安全警告：
+- 绝对不要输出或记录任何 API Key 的明文
+- 绝对不要将 API Key 写入任何可能被提交的文件
+- 如发现泄露风险，立即提醒并给出补救方案`,
+    'dashboard.prompt6': `你是一位 MCP 配置安全专家。请帮我审查和管理项目中的 MCP (Model Context Protocol) 服务器配置。
+
+请按以下步骤操作：
+
+## 第一步：检查 MCP 配置
+先找到并读取 MCP 配置文件（通常在 .mcp.json 或 ~/.claude.json 中）。
+列出所有已配置的 MCP 服务器及其基本信息。
+
+## 第二步：逐一分析每个 MCP 服务器
+对每个 MCP 服务器，用中文解释：
+- 服务器名称和用途（它提供什么能力）
+- 服务器类型（stdio / SSE / streamable HTTP）
+- 启动命令和参数的完整性
+- 环境变量的作用和必要性
+
+## 第三步：安全检查
+- 检查启动命令是否存在（npx / python / node 等是否已安装）
+- 检查命令参数是否安全（是否有潜在的注入风险）
+- 检查环境变量中是否包含敏感信息（Token / Key / Secret）
+- 识别哪些 MCP 服务器拥有高风险权限（如 shell 执行、文件写入、网络访问）
+
+## 第四步：配置优化
+- 如有多个 MCP 服务器，建议合理的加载顺序
+- 对高风险权限的服务器，建议限制其作用范围
+- 检查是否存在已知的兼容性问题或版本冲突
+- 给出安全的安装和配置步骤
+
+## 第五步：输出报告
+生成一份 McpAuditReport.md，包含：
+- MCP 服务器清单及中文说明
+- 安全风险评估（高/中/低）
+- 配置优化建议
+- 安装验证步骤
+
+### 安全提示：
+- MCP 服务器可能拥有读写文件、执行命令、访问网络的权限
+- 仅安装来自可信来源的 MCP 服务器
+- 定期审查 MCP 服务器的权限范围`,
+    'dashboard.prompt7': `你是一位 GitHub 项目管理助手。请帮我分析和管理 GitHub 仓库。
+
+请按以下步骤操作：
+
+## 第一步：了解项目
+先读取项目的关键文件来了解项目：
+- README.md（项目概述、安装和使用说明）
+- package.json / Cargo.toml / go.mod 等（技术栈和依赖）
+- src/ 或主要源码目录结构
+- 如有 .github/ 目录，检查 CI/CD 和模板配置
+
+## 第二步：项目概况总结
+用中文总结：
+- 项目定位和核心功能
+- 技术架构（前端/后端/数据库）
+- 代码组织结构
+- 主要依赖和关键第三方库
+
+## 第三步：代码健康检查
+- 识别代码质量问题（重复代码、过长函数、过度耦合）
+- 检查是否有明显的安全风险
+- 评估测试覆盖率（如有测试文件）
+- 检查依赖是否有已知漏洞（如有 lock 文件）
+
+## 第四步：Issues / PRs 分析（如有访问权限）
+- 对 Open Issues 进行分类和优先级排序
+- 识别长期未解决的 Issues 并分析原因
+- 对 Open PRs 进行代码审查（质量、安全性、性能）
+- 标注需要重点关注的问题
+
+## 第五步：开发建议
+- 建议接下来的开发任务（按优先级排列）
+- 生成合适的 Commit Message 和 PR 描述建议
+- 如有技术债务，给出偿还建议
+
+## 第六步：输出报告
+生成一份 ProjectReport.md，包含项目摘要、风险评估和行动建议。
+
+请用中文输出，仓库名、分支名、命令等保留英文。`,
+
+    'dashboard.tip1': '💡 使用提示：先填写方括号中的占位信息，然后点击「复制提示词」，粘贴到 Claude Code 或 Codex 对话中执行。',
+    'dashboard.tip2': '💡 使用提示：如果你的项目已有代码，AI 会先浏览项目结构再生成计划。建议在已有项目目录下使用。',
+    'dashboard.tip3': '💡 使用提示：这个 prompt 会引导 AI 先检查项目结构、再逐步生成修改指令。适合需要安全、渐进式修改的场景。',
+    'dashboard.tip4': '💡 使用提示：AI 会扫描 .claude/skills/ 和全局 skills 目录，不会自动删除任何文件，所有修改需你确认。',
+    'dashboard.tip5': '💡 使用提示：AI 会检查 ~/.xiaoke/providers.json 等配置文件，帮助你发现安全隐患，不会输出你的 API Key。',
+    'dashboard.tip6': '💡 使用提示：AI 会检查 .mcp.json 或 ~/.claude.json 中的 MCP 配置，评估每个服务器的权限风险。',
+    'dashboard.tip7': '💡 使用提示：AI 会先读取 README、package.json、源码目录等关键文件来理解项目，然后生成结构化的分析报告。',
     'dashboard.copyPrompt': '复制提示词',
     'dashboard.copied': '已复制到剪贴板',
     'dashboard.closeModal': '关闭',
@@ -1589,113 +1784,308 @@ const messages: Record<Locale, Record<string, string>> = {
     'dashboard.modalTitle5': 'API Provider Visual Management',
     'dashboard.modalTitle6': 'MCP Manager',
     'dashboard.modalTitle7': 'GitHub Project Assistant',
-    'dashboard.prompt1': `Please help me create a requirements document for an AI project. Project info:
+    'dashboard.prompt1': `You are a senior product manager. Please generate a professional AI project requirements document (PRD) for the following project.
 
 [Project Name] (fill in your project name)
-[Project Type] Web App / Mobile App / Desktop App / CLI Tool / API Service
-[Target Users] (describe your target user group)
+[Project Type] Web App / Mobile App / Desktop App / CLI Tool / API Service / Other
+[Target Users] (who will use this product and what are their core pain points)
 [Core Features]
 1.
 2.
 3.
-[Tech Stack Preference] (e.g. React + Node.js / Vue + Python / Rust + Tauri)
-[Special Requirements] (e.g. i18n support, accessibility, offline functionality)
+4.
+5.
+[Tech Stack Preference] (e.g. React + Node.js / Vue + Python / Rust + Tauri / Next.js)
+[Special Constraints] (e.g. i18n, accessibility, offline support, compliance requirements)
 
-Please generate a structured requirements document including:
-- Project overview & background
-- Functional requirements (prioritized)
-- Non-functional requirements (performance, security, scalability)
-- Technical architecture recommendations
-- Milestones & delivery plan`,
-    'dashboard.prompt2': `Please generate a detailed frontend/backend development plan based on the following requirements.
+Please generate a PRD following this structure and save as PRD.md:
+
+## 1. Project Overview & Background
+- One-sentence project description
+- Problem being solved (user pain points)
+- Differentiation from existing solutions
+
+## 2. Target User Personas
+- Primary user groups and their characteristics
+- Core use cases for each group
+
+## 3. Core Features
+- Prioritized as P0/P1/P2
+- 1-2 sentence description per feature
+
+## 4. User Flows
+- Core user journeys (text or simple ASCII flow diagrams)
+
+## 5. Page/Module Structure
+- List of main pages/modules and their responsibilities
+
+## 6. Data Model Summary
+- Core entities and their key fields
+- Entity relationships
+
+## 7. Tech Stack Recommendations
+- Recommended frontend/backend technologies with rationale
+- Whether AI/ML capabilities are needed
+
+## 8. MVP Scope
+- Must-have features for v1
+- Explicitly excluded features
+
+## 9. Risks & Assumptions
+- Key technical risks
+- Product assumptions and validation approach
+
+## 10. Milestone Suggestions
+- Suggested development phases and time estimates
+
+Please output in the same language as this prompt. Keep technical terms in English.`,
+    'dashboard.prompt2': `You are a senior full-stack engineer. Please generate a detailed development plan for the following project.
 
 [Project Requirements]
 (Paste or describe your project requirements here)
 
 [Direction] Frontend / Backend / Full-stack
 
-Please generate a development plan including:
-- Technology selection with rationale
-- Project directory structure
-- Core module breakdown with responsibilities
-- API design (backend) or component tree design (frontend)
-- Data model design
-- Development phases (prioritized)
-- Task breakdown per phase (with estimated hours)
-- Key risks & mitigation strategies`,
-    'dashboard.prompt3': `Please generate Claude Code / Codex executable modification instructions based on the following requirements or issue.
+First, quickly browse the existing project code structure, then generate a development plan following this structure:
+
+## 1. Technology Selection
+- Recommended frontend/backend frameworks with rationale
+- Database recommendations
+- Key third-party services/libraries
+
+## 2. Project Directory Structure
+- Recommended directory organization
+- Responsibility of each directory
+
+## 3. Frontend Development Plan (if applicable)
+- Page inventory & route design
+- Component tree structure (core components and their relationships)
+- State management approach
+- UI/UX considerations
+
+## 4. Backend Development Plan (if applicable)
+- API design (RESTful or GraphQL)
+- Middleware/interceptor design
+- Data model design (core tables/collections and fields)
+- Authentication & authorization plan (if needed)
+
+## 5. Development Phases & Milestones
+- Prioritized development phases
+- Task breakdown per phase with estimated hours
+- Inter-phase dependencies
+
+## 6. Testing Plan
+- Unit testing strategy
+- Integration testing strategy
+- Key E2E test scenarios
+
+## 7. Key Risks & Mitigation
+- Technical risks
+- Schedule risks
+- Third-party dependency risks
+
+Save output as:
+- frontend-plan.md (frontend portion)
+- backend-plan.md (backend portion)
+- api-design.md (API design)
+
+Please output in the same language as this prompt.`,
+    'dashboard.prompt3': `You are a careful software engineer. Please generate safe Claude Code / Codex modification instructions based on the following requirements.
 
 [Requirements / Issue Description]
 (Describe the feature you want to implement or the bug to fix)
-
-[Relevant File Paths] (optional, if known)
-- src/
--
 
 [Constraints]
 - Maintain existing API compatibility: Yes / No
 - Add tests: Yes / No
 - Update docs: Yes / No
 
-Please generate:
-1. Summary of the change (one sentence)
-2. List of files to modify
-3. Specific modification instructions per file (Add / Edit / Delete operations)
-4. Verification steps after changes
-5. Notes & potential side effects`,
-    'dashboard.prompt4': `Please help me translate the following Skill configuration to Chinese and optimize its structure and readability.
+Follow these steps:
 
-[Original Skill Content]
-(Paste your English skill configuration or description here)
+## Step 1: Inspect Project Structure
+First, browse the project directory structure and key files to understand the existing code organization.
 
-Please:
-1. Translate skill name, description, and prompts into natural Chinese
-2. Keep all technical terms accurate (API, JSON, MCP, etc. — do not translate)
-3. Preserve the original YAML/JSON structure
-4. Optimize Chinese expressions for clarity and conciseness
-5. Add Chinese comments explaining each field's purpose if needed`,
-    'dashboard.prompt5': `Please help me configure an API Provider. Here's the relevant info:
+## Step 2: Analyze Impact Scope
+- List all files that need to be modified
+- Label each file's modification type (Add / Edit / Delete)
+- Assess dependencies between modifications
 
-[Provider Name] (e.g. OpenRouter / DeepSeek / Custom)
-[API Format] Anthropic Messages / OpenAI Chat Completions
-[API Endpoint URL] (e.g. https://api.openai.com/v1)
-[API Key] (fill in yourself, do not share)
-[Models to map]
-- Opus tier → (provider model name)
-- Sonnet tier → (provider model name)
-- Haiku tier → (provider model name)
-[Proxy Settings] (if needed, provide proxy URL)
-[Extra Environment Variables] (if any special config needed)
+## Step 3: Generate Modification Instructions
+For each file, provide specific instructions:
+- For additions: where to create the file, content summary
+- For edits: which location to modify (function/class/block) and what to change
+- For deletions: what to remove and why
 
-Please help me verify:
-1. API endpoint format is correct
-2. Model mappings are reasonable
-3. Whether additional request headers are needed`,
-    'dashboard.prompt6': `Please help me configure an MCP (Model Context Protocol) server.
+### Key Principles:
+- Make small, incremental changes one at a time
+- Avoid large-scale rewrites
+- Run tests or build verification after each step
+- Summarize changed files after each step
 
-[MCP Server Name]
-[Server Type] stdio / SSE
-[Start Command] (e.g. npx, python, node)
-[Command Arguments]
-[Environment Variables] (format: KEY=VALUE)
+## Step 4: Verification Plan
+- List verification commands for each step
+- e.g. npm run build / cargo check / npx tsc --noEmit / pytest
 
-Please help me:
-1. Verify command and arguments are correct
-2. Check for known compatibility issues
-3. If multiple MCP servers, suggest loading order
-4. Note any required permissions and network access`,
-    'dashboard.prompt7': `Please help me with the following GitHub-related task.
+## Step 5: Summary
+- Complete list of all changed files
+- Potential side effects and rollback plan
 
-[Task Type] Manage Issues / Review PR / Browse Code / Other
-[Repository] (e.g. owner/repo)
-[Details]
-(Describe your GitHub task requirements here)
+Please output instructions that can be directly copied and executed in Claude Code or Codex.`,
+    'dashboard.prompt4': `You are a technical documentation localization expert. Please review and organize Skill configurations in this project.
 
-Please help me:
-1. Analyze current status and provide recommendations
-2. For code reviews, check code quality, security, performance
-3. For issues, help categorize, prioritize
-4. Generate clear summary and action items`,
+Follow these steps:
+
+## Step 1: Scan Skill Directories
+First, scan the following locations for all Skill files:
+- .claude/skills/ (project-level skills)
+- ~/.claude/skills/ (global skills)
+List all found skills with their file paths.
+
+## Step 2: Analyze Each Skill
+For each skill, explain:
+- Skill name and purpose
+- Trigger conditions and applicable scenarios
+- Main tools and model configuration
+- Input/output format
+
+## Step 3: Localization Suggestions
+- Translate skill names and descriptions into natural Chinese
+- Translate important usage instructions and prompts
+- Keep technical terms in English (API, JSON, MCP, SDK, etc.)
+- Keep all code, commands, and configuration values unchanged
+
+## Step 4: Organization Optimization
+- Identify duplicate or low-value skills; suggest merging or removal
+- Suggest skill categorization and naming conventions
+- Propose directory structure improvements
+
+## Step 5: Output Report
+Generate a SkillManageReport.md containing:
+- Skill inventory with descriptions
+- Localization suggestions
+- Optimization recommendations (duplicates/low-value/naming)
+- Recommended organizational structure
+
+### Safety Note:
+- Do NOT delete any files unless explicitly confirmed by the user
+- Back up original files before modification
+- All suggestions must be reviewed and approved before execution`,
+    'dashboard.prompt5': `You are an API configuration security expert. Please review and manage API Provider configurations in this project.
+
+Follow these steps:
+
+## Step 1: Inspect Provider Configuration
+First, find and read the Provider configuration file (usually at ~/.xiaoke/providers.json or in project settings).
+List all configured providers.
+
+## Step 2: Analyze Each Provider
+For each provider, explain:
+- Provider name and API format (Anthropic / OpenAI Compatible)
+- What the Base URL actually points to (official / proxy)
+- Model mapping relationships (which actual models Opus/Sonnet/Haiku map to)
+- Where the API Key is stored (environment variable / config file / system keychain)
+
+## Step 3: Security Audit
+- Check for hardcoded API Keys in configuration files
+- Check if API Keys have exposure risks (e.g., committed to git)
+- Check if .gitignore excludes sensitive configuration files
+- Check if proxy settings are secure
+
+## Step 4: Optimization Recommendations
+- Suggest secure provider preset configurations
+- Recommend using environment variables instead of config files for API Keys
+- If there are redundant or duplicate providers, suggest cleanup
+- Provide specific remediation steps for insecure configurations
+
+### Security Warning:
+- NEVER output or log any API Key in plain text
+- NEVER write API Keys to any file that could be committed
+- If exposure risks are found, alert immediately and provide remediation`,
+    'dashboard.prompt6': `You are an MCP configuration security expert. Please review and manage MCP (Model Context Protocol) server configurations in this project.
+
+Follow these steps:
+
+## Step 1: Inspect MCP Configuration
+First, find and read the MCP configuration file (usually at .mcp.json or ~/.claude.json).
+List all configured MCP servers with their basic information.
+
+## Step 2: Analyze Each MCP Server
+For each MCP server, explain:
+- Server name and purpose (what capabilities it provides)
+- Server type (stdio / SSE / streamable HTTP)
+- Completeness of the start command and arguments
+- Purpose and necessity of environment variables
+
+## Step 3: Security Audit
+- Check if the start command exists (is npx/python/node installed)
+- Check if command arguments are safe (potential injection risks)
+- Check if environment variables contain sensitive information (Token/Key/Secret)
+- Identify MCP servers with high-risk permissions (shell execution, file write, network access)
+
+## Step 4: Configuration Optimization
+- If multiple MCP servers exist, suggest a reasonable loading order
+- For high-risk permission servers, suggest limiting their scope
+- Check for known compatibility issues or version conflicts
+- Provide safe installation and configuration steps
+
+## Step 5: Output Report
+Generate an McpAuditReport.md containing:
+- MCP server inventory with descriptions
+- Security risk assessment (High/Medium/Low)
+- Configuration optimization recommendations
+- Installation verification steps
+
+### Safety Note:
+- MCP servers may have permissions to read/write files, execute commands, and access networks
+- Only install MCP servers from trusted sources
+- Regularly review MCP server permission scopes`,
+    'dashboard.prompt7': `You are a GitHub project management assistant. Please analyze and manage this GitHub repository.
+
+Follow these steps:
+
+## Step 1: Understand the Project
+First, read the project's key files to understand it:
+- README.md (project overview, installation, and usage)
+- package.json / Cargo.toml / go.mod (tech stack and dependencies)
+- src/ or main source directory structure
+- If .github/ directory exists, check CI/CD and template configurations
+
+## Step 2: Project Summary
+Summarize:
+- Project positioning and core functionality
+- Technical architecture (frontend/backend/database)
+- Code organization structure
+- Key dependencies and critical third-party libraries
+
+## Step 3: Code Health Check
+- Identify code quality issues (duplicate code, long functions, excessive coupling)
+- Check for obvious security risks
+- Assess test coverage (if test files exist)
+- Check dependencies for known vulnerabilities (if lock files exist)
+
+## Step 4: Issues/PRs Analysis (if access available)
+- Categorize and prioritize open issues
+- Identify long-standing unresolved issues and analyze reasons
+- Review open PRs (code quality, security, performance)
+- Highlight issues requiring attention
+
+## Step 5: Development Recommendations
+- Suggest next development tasks (prioritized)
+- Generate appropriate commit message and PR description suggestions
+- If technical debt exists, suggest a repayment plan
+
+## Step 6: Output Report
+Generate a ProjectReport.md containing project summary, risk assessment, and action items.
+
+Please output in the same language as this prompt. Keep repo names, branch names, and commands in English.`,
+
+    'dashboard.tip1': '💡 Tip: Fill in the placeholder info in brackets first, then click "Copy Prompt" and paste into Claude Code or Codex to execute.',
+    'dashboard.tip2': '💡 Tip: If your project already has code, the AI will browse the project structure first before generating the plan. Best used inside an existing project directory.',
+    'dashboard.tip3': '💡 Tip: This prompt guides the AI to inspect project structure first, then generate modification instructions step by step. Ideal for safe, incremental changes.',
+    'dashboard.tip4': '💡 Tip: The AI will scan .claude/skills/ and global skills directories. It will not auto-delete any files — all changes require your confirmation.',
+    'dashboard.tip5': '💡 Tip: The AI will check ~/.xiaoke/providers.json and other config files to help identify security issues. Your API Keys will not be output.',
+    'dashboard.tip6': '💡 Tip: The AI will check MCP config in .mcp.json or ~/.claude.json and assess the permission risk of each server.',
+    'dashboard.tip7': '💡 Tip: The AI will first read README, package.json, source directories, and other key files to understand the project, then generate a structured analysis report.',
     'dashboard.copyPrompt': 'Copy Prompt',
     'dashboard.copied': 'Copied to clipboard',
     'dashboard.closeModal': 'Close',

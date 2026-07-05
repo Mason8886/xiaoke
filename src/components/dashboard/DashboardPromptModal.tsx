@@ -28,13 +28,25 @@ const MODAL_TITLE_KEYS = [
   'dashboard.modalTitle7',
 ];
 
+const TIP_KEYS = [
+  'dashboard.tip1',
+  'dashboard.tip2',
+  'dashboard.tip3',
+  'dashboard.tip4',
+  'dashboard.tip5',
+  'dashboard.tip6',
+  'dashboard.tip7',
+];
+
 export function DashboardPromptModal({ open, cardIndex, onClose }: DashboardPromptModalProps) {
   const t = useT();
   const [copied, setCopied] = useState(false);
 
   const promptKey = PROMPT_KEYS[cardIndex] || PROMPT_KEYS[0];
   const titleKey = MODAL_TITLE_KEYS[cardIndex] || MODAL_TITLE_KEYS[0];
+  const tipKey = TIP_KEYS[cardIndex] || TIP_KEYS[0];
   const promptText = t(promptKey);
+  const tipText = t(tipKey);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -88,6 +100,11 @@ export function DashboardPromptModal({ open, cardIndex, onClose }: DashboardProm
 
         {/* Prompt text area */}
         <div className="px-5 py-2 flex-1 min-h-0">
+          {/* Usage tip */}
+          <div className="mb-2 px-3 py-2 rounded-lg bg-accent/5 border border-accent/10
+            text-xs text-text-secondary leading-relaxed">
+            {tipText}
+          </div>
           <textarea
             readOnly
             value={promptText}
